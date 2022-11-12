@@ -128,3 +128,66 @@ void Battlefield::FinishSurrounding()
 			if (field[i, j] == -1)
 				field[i, j]--;
 }
+
+bool Battlefield::PlayerPlacement(int i, int j, int deckCount, int direction)
+{
+	bool flag = 0;
+	if (TestNewPaluba(i, j))
+	{
+		switch (direction)
+		{
+		case 0:
+			if (TestNewPaluba(i - deckCount, j))
+				flag = 1;
+			break;
+		case 1:
+			if (TestNewPaluba(i, j + deckCount))
+				flag = 1;
+			break;
+		case 2:
+			if (TestNewPaluba(i + deckCount, j))
+				flag = 1;
+			break;
+		case 3:
+			if (TestNewPaluba(i, j - deckCount))
+				flag = 1;
+			break;
+		}		
+	}
+	if (flag == 0) return 0;
+	field[i, j] = deckCount;
+	SurroundDeck(i, j);
+	switch (direction)
+	{
+	case 0:
+		for (int k = deckCount - 1; k >= 1; k--)
+		{
+			field[i - k, j] = deckCount;
+			SurroundDeck(i - k, j);
+		}
+		break;
+	case 1:
+		for (int k = deckCount - 1; k >= 1; k--)
+		{
+			field[i, j + k] = deckCount;
+			SurroundDeck(i, j + k);
+		}
+		break;
+	case 2:
+		for (int k = deckCount - 1; k >= 1; k--)
+		{
+			field[i + k, j] = deckCount;
+			SurroundDeck(i + k, j);
+		}
+		break;
+	case 3:
+		for (int k = deckCount - 1; k >= 1; k--)
+		{
+			field[i, j - k] = deckCount;
+			SurroundDeck(i, j - k);
+		}
+		break;
+	}
+	FinishSurrounding();
+	return 1;
+}

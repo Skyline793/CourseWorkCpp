@@ -24,6 +24,6 @@ public:
 	void SetSurrounding(int i, int j);
 	void SurroundDeck(int i, int j);
 	void FinishSurrounding();
-
+	bool PlayerPlacement(int i, int j, int deckCount, int direction);
 };
 
