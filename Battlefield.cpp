@@ -52,25 +52,39 @@ void Battlefield::ShipAutoPlacement(int deckCount)
 			break;
 	}
 	field[i, j] = deckCount;
+	SurroundDeck(i, j);
 	switch (direction)
 	{
 	case 0:
-		for (int k = deckCount - 1; k >= 1; k--)
+		for (int k = deckCount - 1; k >= 1; k--) 
+		{
 			field[i - k, j] = deckCount;
+			SurroundDeck(i - k, j);
+		}
 		break;
 	case 1:
 		for (int k = deckCount - 1; k >= 1; k--)
+		{
 			field[i, j + k] = deckCount;
+			SurroundDeck(i, j + k);
+		}
 		break;
 	case 2:
-		for (int k = deckCount - 1; k >= 1; k--)
+		for (int k = deckCount - 1; k >= 1; k--) 
+		{
 			field[i + k, j] = deckCount;
+			SurroundDeck(i + k, j);
+		}
 		break;
 	case 3:
 		for (int k = deckCount - 1; k >= 1; k--)
+		{
 			field[i, j - k] = deckCount;
+			SurroundDeck(i, j - k);
+		}
 		break;
 	}
+	FinishSurrounding();
 }
 
 void Battlefield::FullAutoPlacement()
@@ -82,4 +96,35 @@ void Battlefield::FullAutoPlacement()
 		ShipAutoPlacement(2);
 	for (int i = 1; i <=4; i++)
 		ShipAutoPlacement(1);
+}
+
+void Battlefield::SetSurrounding(int i, int j)
+{
+	try {
+		if (field[i, j] == 0)
+			field[i, j] = -1;
+	}
+	catch (IndexOutOfRangeException^)
+	{
+	}
+}
+
+void Battlefield::SurroundDeck(int i, int j)
+{
+	SetSurrounding(i - 1, j - 1);
+	SetSurrounding(i - 1, j);
+	SetSurrounding(i - 1, j + 1);
+	SetSurrounding(i, j + 1);
+	SetSurrounding(i + 1, j + 1);
+	SetSurrounding(i + 1, j);
+	SetSurrounding(i + 1, j - 1);
+	SetSurrounding(i, j - 1);
+}
+
+void Battlefield::FinishSurrounding()
+{
+	for (int i = 0; i < N; i++)
+		for (int j = 0; j < N; j++)
+			if (field[i, j] == -1)
+				field[i, j]--;
 }

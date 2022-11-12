@@ -14,13 +14,16 @@ public:
 	void Display() {
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++)
-				Console::Write(field[i, j] + " ");
-			Console::WriteLine();
+				printf("%2d  ", field[i, j]);
+			cout << endl << endl;
 		}
 	}
 	bool TestNewPaluba(int i, int j);
 	void ShipAutoPlacement(int deckCount);
 	void FullAutoPlacement();
+	void SetSurrounding(int i, int j);
+	void SurroundDeck(int i, int j);
+	void FinishSurrounding();
 
 };
 
