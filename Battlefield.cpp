@@ -7,10 +7,91 @@ Battlefield::Battlefield()
 			field[i, j] = 0;
 }
 
+void Battlefield::Fire(int i, int j)
+{
+	field[i, j] += 7;
+}
+
+int Battlefield::GetValue(int i, int j)
+{
+	return field[i, j];
+}
+
+bool Battlefield::InField(int i, int j)
+{
+	if (i >= 0 && i < N && j >= 0 && j < N)
+		return 1;
+	else
+		return 0;
+}
+
+void Battlefield::TestKilled(int i, int j)
+{
+	if (field[i, j] == 8) { //Если однопалубный
+		field[i, j] += 7; //прибавляем к убитому +7
+		SurroundKilledDeck(i, j);//Уменьшаем окружение убитого на 1
+	}
+	else if (field[i, j] == 9) {
+		AnalizeKill(i, j, 2);
+	}
+	else if (field[i, j] == 10) {
+		AnalizeKill(i, j, 3);
+	}
+	else if (field[i, j] == 11) {
+		AnalizeKill(i, j, 4);
+	}
+}
+
+void Battlefield::AnalizeKill(int i, int j, int deckCount)
+{
+	int woundCount = 0;
+	for (int x = i - (deckCount - 1); x <= i + (deckCount - 1); x++)
+		for (int y = j - (deckCount - 1); y <= j + (deckCount - 1); y++) 
+		{
+			if (InField(x, y) && field[x, y] == deckCount + 7)
+				woundCount++;
+		}
+	if (woundCount == deckCount)
+		for (int x = i - (deckCount - 1); x <= i + (deckCount - 1); x++)
+			for (int y = j - (deckCount - 1); y <= j + (deckCount - 1); y++)
+			{
+				if (InField(x, y) && field[x, y] == deckCount + 7)
+				{
+					field[x, y] += 7;
+					SurroundKilledDeck(x, y);
+				}
+					
+			}
+}
+
+void Battlefield::SetSurroundingKilled(int i, int j)
+{
+	try
+	{
+		if (field[i, j] == -1 || field[i, j] == 6)
+			field[i, j]--;
+	}
+	catch (IndexOutOfRangeException^)
+	{
+	}
+}
+
+void Battlefield::SurroundKilledDeck(int i, int j)
+{
+	SetSurroundingKilled(i - 1, j - 1);
+	SetSurroundingKilled(i - 1, j);
+	SetSurroundingKilled(i - 1, j + 1);
+	SetSurroundingKilled(i, j + 1);
+	SetSurroundingKilled(i + 1, j + 1);
+	SetSurroundingKilled(i + 1, j);
+	SetSurroundingKilled(i + 1, j - 1);
+	SetSurroundingKilled(i, j - 1);
+}
+
 bool Battlefield::TestNewPaluba(int i, int j)
 {
 	try {
-		if (field[i, j] == 0 || field[i, j] == -1) return 1;
+		if (field[i, j] == 0 || field[i, j] == -2) return 1;
 		else return 0;
 	}
 	catch (IndexOutOfRangeException^ e) {
@@ -52,35 +133,35 @@ void Battlefield::ShipAutoPlacement(int deckCount)
 			break;
 	}
 	field[i, j] = deckCount;
-	SurroundDeck(i, j);
+	SurroundPlacedDeck(i, j);
 	switch (direction)
 	{
 	case 0:
 		for (int k = deckCount - 1; k >= 1; k--) 
 		{
 			field[i - k, j] = deckCount;
-			SurroundDeck(i - k, j);
+			SurroundPlacedDeck(i - k, j);
 		}
 		break;
 	case 1:
 		for (int k = deckCount - 1; k >= 1; k--)
 		{
 			field[i, j + k] = deckCount;
-			SurroundDeck(i, j + k);
+			SurroundPlacedDeck(i, j + k);
 		}
 		break;
 	case 2:
 		for (int k = deckCount - 1; k >= 1; k--) 
 		{
 			field[i + k, j] = deckCount;
-			SurroundDeck(i + k, j);
+			SurroundPlacedDeck(i + k, j);
 		}
 		break;
 	case 3:
 		for (int k = deckCount - 1; k >= 1; k--)
 		{
 			field[i, j - k] = deckCount;
-			SurroundDeck(i, j - k);
+			SurroundPlacedDeck(i, j - k);
 		}
 		break;
 	}
@@ -98,35 +179,35 @@ void Battlefield::FullAutoPlacement()
 		ShipAutoPlacement(1);
 }
 
-void Battlefield::SetSurrounding(int i, int j)
+void Battlefield::SetSurroundingPlaced(int i, int j)
 {
 	try {
 		if (field[i, j] == 0)
-			field[i, j] = -1;
+			field[i, j] = -2;
 	}
 	catch (IndexOutOfRangeException^)
 	{
 	}
 }
 
-void Battlefield::SurroundDeck(int i, int j)
+void Battlefield::SurroundPlacedDeck(int i, int j)
 {
-	SetSurrounding(i - 1, j - 1);
-	SetSurrounding(i - 1, j);
-	SetSurrounding(i - 1, j + 1);
-	SetSurrounding(i, j + 1);
-	SetSurrounding(i + 1, j + 1);
-	SetSurrounding(i + 1, j);
-	SetSurrounding(i + 1, j - 1);
-	SetSurrounding(i, j - 1);
+	SetSurroundingPlaced(i - 1, j - 1);
+	SetSurroundingPlaced(i - 1, j);
+	SetSurroundingPlaced(i - 1, j + 1);
+	SetSurroundingPlaced(i, j + 1);
+	SetSurroundingPlaced(i + 1, j + 1);
+	SetSurroundingPlaced(i + 1, j);
+	SetSurroundingPlaced(i + 1, j - 1);
+	SetSurroundingPlaced(i, j - 1);
 }
 
 void Battlefield::FinishSurrounding()
 {
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < N; j++)
-			if (field[i, j] == -1)
-				field[i, j]--;
+			if (field[i, j] == -2)
+				field[i, j]++;
 }
 
 bool Battlefield::PlayerPlacement(int i, int j, int deckCount, int direction)
@@ -156,38 +237,48 @@ bool Battlefield::PlayerPlacement(int i, int j, int deckCount, int direction)
 	}
 	if (flag == 0) return 0;
 	field[i, j] = deckCount;
-	SurroundDeck(i, j);
+	SurroundPlacedDeck(i, j);
 	switch (direction)
 	{
 	case 0:
 		for (int k = deckCount - 1; k >= 1; k--)
 		{
 			field[i - k, j] = deckCount;
-			SurroundDeck(i - k, j);
+			SurroundPlacedDeck(i - k, j);
 		}
 		break;
 	case 1:
 		for (int k = deckCount - 1; k >= 1; k--)
 		{
 			field[i, j + k] = deckCount;
-			SurroundDeck(i, j + k);
+			SurroundPlacedDeck(i, j + k);
 		}
 		break;
 	case 2:
 		for (int k = deckCount - 1; k >= 1; k--)
 		{
 			field[i + k, j] = deckCount;
-			SurroundDeck(i + k, j);
+			SurroundPlacedDeck(i + k, j);
 		}
 		break;
 	case 3:
 		for (int k = deckCount - 1; k >= 1; k--)
 		{
 			field[i, j - k] = deckCount;
-			SurroundDeck(i, j - k);
+			SurroundPlacedDeck(i, j - k);
 		}
 		break;
 	}
 	FinishSurrounding();
 	return 1;
+}
+
+int Battlefield::SumKilled()
+{
+	int Sum = 0;
+	for (int i = 0; i < N; i++)
+		for (int j = 0; j < N; j++)
+			if (field[i, j] >= 15)
+				Sum += field[i, j];
+	return Sum;
 }

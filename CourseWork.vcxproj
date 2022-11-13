@@ -113,10 +113,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Battlefield.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="MyForm.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Battlefield.cpp" />
     <ClCompile Include="CourseWork.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="MyForm.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
