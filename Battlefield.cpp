@@ -71,7 +71,7 @@ void Battlefield::SetSurroundingKilled(int i, int j)
 		if (field[i, j] == -1 || field[i, j] == 6)
 			field[i, j]--;
 	}
-	catch (IndexOutOfRangeException^)
+	catch (...)
 	{
 	}
 }
@@ -94,7 +94,7 @@ bool Battlefield::TestNewPaluba(int i, int j)
 		if (field[i, j] == 0 || field[i, j] == -2) return 1;
 		else return 0;
 	}
-	catch (IndexOutOfRangeException^ e) {
+	catch (...) {
 		return 0;
 	}
 }
@@ -185,7 +185,7 @@ void Battlefield::SetSurroundingPlaced(int i, int j)
 		if (field[i, j] == 0)
 			field[i, j] = -2;
 	}
-	catch (IndexOutOfRangeException^)
+	catch (...)
 	{
 	}
 }
@@ -210,7 +210,7 @@ void Battlefield::FinishSurrounding()
 				field[i, j]++;
 }
 
-bool Battlefield::PlayerPlacement(int i, int j, int deckCount, int direction)
+bool Battlefield::UserPlacement(int i, int j, int deckCount, int direction)
 {
 	bool flag = 0;
 	if (TestNewPaluba(i, j))

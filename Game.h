@@ -17,6 +17,6 @@ public:
 	Game();
 	bool CompMove();
 	void PlayerMove(int i, int j);
-	void IsEndGame();
+	int IsEndGame();
 };
 

@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 using namespace std;
-using namespace System;
 
 
 ref class Battlefield
@@ -31,7 +30,7 @@ public:
 	void SetSurroundingPlaced(int i, int j);
 	void SurroundPlacedDeck(int i, int j);
 	void FinishSurrounding();
-	bool PlayerPlacement(int i, int j, int deckCount, int direction);
+	bool UserPlacement(int i, int j, int deckCount, int direction);
 	int SumKilled();
 };
 

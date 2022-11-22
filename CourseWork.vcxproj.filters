@@ -21,7 +21,7 @@
     <ClInclude Include="Game.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="MyForm.h">
+    <ClInclude Include="SeaBattle.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
@@ -35,8 +35,22 @@
     <ClCompile Include="Game.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="MyForm.cpp">
+    <ClCompile Include="SeaBattle.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="deck.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="kill.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="wound.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="miss.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -5,7 +5,8 @@ Game::Game()
     endGame = 0;
     playerCount = 0;
     compCount = 0;
-    compMove = 1;
+    playerMove = 1;
+    compMove = 0;
 }
 
 bool Game::CompMove()
@@ -174,26 +175,22 @@ void Game::PlayerMove(int i, int j)
         }
         playerMove = 1;
     }
-    cout << "Player: " << playerCount << " PC: " << compCount << endl;
 }
 
-void Game::IsEndGame()
+int Game::IsEndGame()
 {
     if (compField.SumKilled() == 330) endGame = 1;
     if (PlayerField.SumKilled() == 330) endGame = 2;
     if (endGame == 1)
     {
-        cout << "PLAYER WINS" << endl;
         playerMove = 0;
         compMove = 0;
-        
+       
     }
     else if (endGame == 2)
     {
-        cout << "PC WINS" << endl;
         playerMove = 0;
         compMove = 0;
-        
     }
-    
+    return endGame;
 }

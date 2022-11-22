@@ -108,13 +108,13 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies />
-      <SubSystem>NotSet</SubSystem>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Battlefield.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="MyForm.h">
+    <ClInclude Include="SeaBattle.h">
       <FileType>CppForm</FileType>
     </ClInclude>
   </ItemGroup>
@@ -122,7 +122,7 @@
     <ClCompile Include="Battlefield.cpp" />
     <ClCompile Include="CourseWork.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="MyForm.cpp" />
+    <ClCompile Include="SeaBattle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -130,6 +130,17 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SeaBattle.resx">
+      <DependentUpon>SeaBattle.h</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="deck.png" />
+    <Image Include="kill.png" />
+    <Image Include="miss.png" />
+    <Image Include="wound.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
