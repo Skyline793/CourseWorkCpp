@@ -2,11 +2,20 @@
 
 Game::Game()
 {
+}
+
+void Game::Start(int rasstanovka)
+{
     endGame = 0;
     playerCount = 0;
     compCount = 0;
     playerMove = 1;
     compMove = 0;
+    PlayerField.Clear();
+    CompField.Clear();
+    if(!rasstanovka)
+        PlayerField.FullAutoPlacement();
+    CompField.FullAutoPlacement();
 }
 
 bool Game::CompMove()
@@ -162,10 +171,10 @@ bool Game::CompMove()
 void Game::PlayerMove(int i, int j)
 {
     playerCount++;
-    compField.Fire(i, j);
-    compField.TestKilled(i, j);
+    CompField.Fire(i, j);
+    CompField.TestKilled(i, j);
     IsEndGame();
-    if (compField.GetValue(i, j) < 8)
+    if (CompField.GetValue(i, j) < 8)
     {
         playerMove = 0;
         compMove = 1;
@@ -179,7 +188,7 @@ void Game::PlayerMove(int i, int j)
 
 int Game::IsEndGame()
 {
-    if (compField.SumKilled() == 330) endGame = 1;
+    if (CompField.SumKilled() == 330) endGame = 1;
     if (PlayerField.SumKilled() == 330) endGame = 2;
     if (endGame == 1)
     {

@@ -2,9 +2,6 @@
 
 Battlefield::Battlefield()
 {
-	for (int i = 0; i < N; i++)
-		for (int j = 0; j < N; j++)
-			field[i, j] = 0;
 }
 
 void Battlefield::Fire(int i, int j)
@@ -66,14 +63,9 @@ void Battlefield::AnalizeKill(int i, int j, int deckCount)
 
 void Battlefield::SetSurroundingKilled(int i, int j)
 {
-	try
-	{
+	if (InField(i, j))
 		if (field[i, j] == -1 || field[i, j] == 6)
 			field[i, j]--;
-	}
-	catch (...)
-	{
-	}
 }
 
 void Battlefield::SurroundKilledDeck(int i, int j)
@@ -88,15 +80,13 @@ void Battlefield::SurroundKilledDeck(int i, int j)
 	SetSurroundingKilled(i, j - 1);
 }
 
-bool Battlefield::TestNewPaluba(int i, int j)
+bool Battlefield::TestNewDeck(int i, int j)
 {
-	try {
+	if (InField(i, j))
 		if (field[i, j] == 0 || field[i, j] == -2) return 1;
 		else return 0;
-	}
-	catch (...) {
+	else
 		return 0;
-	}
 }
 
 void Battlefield::ShipAutoPlacement(int deckCount)
@@ -109,23 +99,23 @@ void Battlefield::ShipAutoPlacement(int deckCount)
 		i = rand() % 10;
 		j = rand() % 10;
 		direction = rand() % 4; //0 вверх, 1 вправо, 2 вниз, 3 влево
-		if (TestNewPaluba(i, j))
+		if (TestNewDeck(i, j))
 			switch (direction)
 			{
 			case 0:
-				if (TestNewPaluba(i - deckCount, j))
+				if (TestNewDeck(i - deckCount - 1, j))
 					flag = 1;
 				break;
 			case 1:
-				if (TestNewPaluba(i, j + deckCount))
+				if (TestNewDeck(i, j + deckCount - 1))
 					flag = 1;
 				break;
 			case 2:
-				if (TestNewPaluba(i + deckCount, j))
+				if (TestNewDeck(i + deckCount - 1, j))
 					flag = 1;
 				break;
 			case 3:
-				if (TestNewPaluba(i, j - deckCount))
+				if (TestNewDeck(i, j - deckCount - 1))
 					flag = 1;
 				break;
 			}
@@ -181,13 +171,9 @@ void Battlefield::FullAutoPlacement()
 
 void Battlefield::SetSurroundingPlaced(int i, int j)
 {
-	try {
+	if (InField(i, j))
 		if (field[i, j] == 0)
 			field[i, j] = -2;
-	}
-	catch (...)
-	{
-	}
 }
 
 void Battlefield::SurroundPlacedDeck(int i, int j)
@@ -210,27 +196,19 @@ void Battlefield::FinishSurrounding()
 				field[i, j]++;
 }
 
-bool Battlefield::UserPlacement(int i, int j, int deckCount, int direction)
+bool Battlefield::UserPlacement(int i, int j, int deckCount, bool direction)
 {
 	bool flag = 0;
-	if (TestNewPaluba(i, j))
+	if (TestNewDeck(i, j))
 	{
 		switch (direction)
 		{
 		case 0:
-			if (TestNewPaluba(i - deckCount, j))
+			if (TestNewDeck(i, j + deckCount - 1))
 				flag = 1;
 			break;
 		case 1:
-			if (TestNewPaluba(i, j + deckCount))
-				flag = 1;
-			break;
-		case 2:
-			if (TestNewPaluba(i + deckCount, j))
-				flag = 1;
-			break;
-		case 3:
-			if (TestNewPaluba(i, j - deckCount))
+			if (TestNewDeck(i + deckCount - 1, j))
 				flag = 1;
 			break;
 		}		
@@ -243,29 +221,15 @@ bool Battlefield::UserPlacement(int i, int j, int deckCount, int direction)
 	case 0:
 		for (int k = deckCount - 1; k >= 1; k--)
 		{
-			field[i - k, j] = deckCount;
-			SurroundPlacedDeck(i - k, j);
+			field[i, j + k] = deckCount;
+			SurroundPlacedDeck(i, j + k);
 		}
 		break;
 	case 1:
 		for (int k = deckCount - 1; k >= 1; k--)
 		{
-			field[i, j + k] = deckCount;
-			SurroundPlacedDeck(i, j + k);
-		}
-		break;
-	case 2:
-		for (int k = deckCount - 1; k >= 1; k--)
-		{
 			field[i + k, j] = deckCount;
 			SurroundPlacedDeck(i + k, j);
-		}
-		break;
-	case 3:
-		for (int k = deckCount - 1; k >= 1; k--)
-		{
-			field[i, j - k] = deckCount;
-			SurroundPlacedDeck(i, j - k);
 		}
 		break;
 	}
@@ -281,4 +245,11 @@ int Battlefield::SumKilled()
 			if (field[i, j] >= 15)
 				Sum += field[i, j];
 	return Sum;
+}
+
+void Battlefield::Clear()
+{
+	for (int i = 0; i < N; i++)
+		for (int j = 0; j < N; j++)
+			field[i, j] = 0;
 }

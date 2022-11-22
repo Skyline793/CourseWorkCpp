@@ -13,8 +13,9 @@ ref class Game
 	int playerCount, compCount;
 	bool playerMove, compMove;
 public:
-	Battlefield PlayerField, compField;
+	Battlefield PlayerField, CompField;
 	Game();
+	void Start(int rasstanovka);
 	bool CompMove();
 	void PlayerMove(int i, int j);
 	int IsEndGame();
