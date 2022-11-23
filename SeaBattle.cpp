@@ -15,6 +15,17 @@ namespace CourseWork
 			g->DrawRectangle(pen, DXY, DXY, 10 * H, 10 * H);
 			g->DrawRectangle(pen, DXY + 13 * H, DXY, 10 * H, 10 * H);
 		}
+		for (int i = 0; i < 10; i++)
+		{
+			g->DrawString(symbols[i], gcnew Drawing::Font("Segoe UI", 12), gcnew Drawing::SolidBrush(Color::Black), DXY + i*H + H / 5, DXY - H);
+			g->DrawString(symbols[i], gcnew Drawing::Font("Segoe UI", 12), gcnew Drawing::SolidBrush(Color::Black), DXY + 13 * H + i*H + H / 4, DXY - H);
+			g->DrawString(numbers[i], gcnew Drawing::Font("Segoe UI", 12), gcnew Drawing::SolidBrush(Color::Black), DXY - H - 6, DXY + i*H);
+			g->DrawString(numbers[i], gcnew Drawing::Font("Segoe UI", 12), gcnew Drawing::SolidBrush(Color::Black), DXY +12*H - 6, DXY + i * H);
+		}
+		if (!rasstanovka)
+			this->Countlabel->Text = "Ходов сделано\nИгрок: " + Convert::ToString(game->GetPlayerCount()) + "\nКомпьютер: " + Convert::ToString(game->GetCompCount());
+		else
+			this->Countlabel->Text = "";
 	}
 
 	void SeaBattle::DrawShips(Graphics^ g)
@@ -42,62 +53,69 @@ namespace CourseWork
 	}
 	void SeaBattle::DrawPlacementShips(Graphics^ g)
 	{
-		Pen^ pen = gcnew Pen(Color::Black, 2);
-		Pen^ selectPen = gcnew Pen(Color::Green, 4);
-		if (vert)
-		{
-			ship4 = Rectangle(DXY + 24 * H, DXY, 4 * H, H);
-			ship3 = Rectangle(DXY + 24 * H, DXY + 2 * H, 3 * H, H);
-			ship2 = Rectangle(DXY + 24 * H, DXY + 4 * H, 2 * H, H);
-			ship1 = Rectangle(DXY + 24 * H, DXY + 6 * H, 1 * H, H);
-		}
-		else
-		{
-			ship4 = Rectangle(DXY + 24 * H, DXY, H, 4 * H);
-			ship3 = Rectangle(DXY + 26 * H, DXY, H, 3 * H);
-			ship2 = Rectangle(DXY + 28 * H, DXY, H, 2 * H);
-			ship1 = Rectangle(DXY + 30 * H, DXY, H, 1 * H);
-		}
-		if (s4 != 0)
-		{
-			if (selectS4)
-				g->DrawRectangle(selectPen, ship4);
-			else
-				g->DrawRectangle(pen, ship4);
-		}
-		if (s3 != 0)
-		{
-			if (selectS3)
-				g->DrawRectangle(selectPen, ship3);
-			else
-				g->DrawRectangle(pen, ship3);
-		}
-		if (s2 != 0)
-		{
-			if (selectS2)
-				g->DrawRectangle(selectPen, ship2);
-			else
-				g->DrawRectangle(pen, ship2);
-		}
-		if (s1 != 0)
-		{
-			if (selectS1)
-				g->DrawRectangle(selectPen, ship1);
-			else
-				g->DrawRectangle(pen, ship1);
-		}
-
-		if (s1 + s2 + s3 + s4 != 0)
+		if (rasstanovka)
 		{
 			Placelabel->Visible = true;
 			orientation_button->Visible = true;
+			Pen^ pen = gcnew Pen(Color::Black, 2);
+			Pen^ selectPen = gcnew Pen(Color::Green, 4);
+			if (vert)
+			{
+				ship4 = Rectangle(DXY + 24 * H, DXY, 4 * H, H);
+				ship3 = Rectangle(DXY + 24 * H, DXY + 2 * H, 3 * H, H);
+				ship2 = Rectangle(DXY + 24 * H, DXY + 4 * H, 2 * H, H);
+				ship1 = Rectangle(DXY + 24 * H, DXY + 6 * H, 1 * H, H);
+			}
+			else
+			{
+				ship4 = Rectangle(DXY + 24 * H, DXY, H, 4 * H);
+				ship3 = Rectangle(DXY + 26 * H, DXY, H, 3 * H);
+				ship2 = Rectangle(DXY + 28 * H, DXY, H, 2 * H);
+				ship1 = Rectangle(DXY + 30 * H, DXY, H, 1 * H);
+			}
+			if (s4 != 0)
+			{
+				if (selectS4)
+					g->DrawRectangle(selectPen, ship4);
+				else
+					g->DrawRectangle(pen, ship4);
+			}
+			if (s3 != 0)
+			{
+				if (selectS3)
+					g->DrawRectangle(selectPen, ship3);
+				else
+					g->DrawRectangle(pen, ship3);
+			}
+			if (s2 != 0)
+			{
+				if (selectS2)
+					g->DrawRectangle(selectPen, ship2);
+				else
+					g->DrawRectangle(pen, ship2);
+			}
+			if (s1 != 0)
+			{
+				if (selectS1)
+					g->DrawRectangle(selectPen, ship1);
+				else
+					g->DrawRectangle(pen, ship1);
+			}
+
+			if (s1 + s2 + s3 + s4 != 0)
+			{
+				
+			}
+			else
+				rasstanovka = 0;
 		}
 		else
 		{
 			Placelabel->Visible = false;
 			orientation_button->Visible = false;
-			rasstanovka = 0;
+
 		}
+		
 	}
 	void SeaBattle::SelectShip(MouseEventArgs^ e)
 	{

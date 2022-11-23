@@ -203,3 +203,23 @@ int Game::IsEndGame()
     }
     return endGame;
 }
+
+int Game::GetPlayerCount()
+{
+    return playerCount;
+}
+
+int Game::GetCompCount()
+{
+    return compCount;
+}
+
+bool Game::IsPlayerMove()
+{
+    return playerMove;
+}
+
+bool Game::IsCompMove()
+{
+    return compMove;
+}

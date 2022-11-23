@@ -16,13 +16,15 @@ namespace CourseWork {
 	public ref class SeaBattle : public System::Windows::Forms::Form
 	{
 	private:
-		int DXY = 60, H = 30;
+		int DXY = 80, H = 30;
 		Drawing::Rectangle ship1, ship2, ship3, ship4;
 		int s1, s2, s3, s4;
 		bool selectS1, selectS2, selectS3, selectS4;
 		bool vert, rasstanovka;
 		Game^ game;
 		Image ^wound, ^kill, ^deck, ^miss;
+		static const cli::array<String^>^ symbols = gcnew cli::array<String^> { "А", "Б", "В", "Г", "Д", "Е", "Ж", "З", "И", "К" };
+		static const cli::array<String^>^ numbers = gcnew cli::array<String^> { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
 	private: System::Windows::Forms::PictureBox^ pictureBox;
 	private: System::Windows::Forms::MenuStrip^ menuStrip;
 	private: System::Windows::Forms::ToolStripMenuItem^ PlayMenuItem;
@@ -32,8 +34,9 @@ namespace CourseWork {
 	private: System::Windows::Forms::ToolStripMenuItem^ SpravkaMenuItem;
 	private: System::Windows::Forms::Button^ orientation_button;
 	private: System::Windows::Forms::Label^ Placelabel;
-
-
+	private: System::Windows::Forms::Label^ playerFieldlabel;
+	private: System::Windows::Forms::Label^ compFieldlabel;
+	private: System::Windows::Forms::Label^ Countlabel;
 	private: System::Windows::Forms::Timer^ timer;
 	public:
 		SeaBattle(void)
@@ -91,6 +94,9 @@ namespace CourseWork {
 			this->SpravkaMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->orientation_button = (gcnew System::Windows::Forms::Button());
 			this->Placelabel = (gcnew System::Windows::Forms::Label());
+			this->playerFieldlabel = (gcnew System::Windows::Forms::Label());
+			this->compFieldlabel = (gcnew System::Windows::Forms::Label());
+			this->Countlabel = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox))->BeginInit();
 			this->menuStrip->SuspendLayout();
 			this->SuspendLayout();
@@ -102,9 +108,11 @@ namespace CourseWork {
 			// 
 			// pictureBox
 			// 
-			this->pictureBox->Location = System::Drawing::Point(0, 27);
+			this->pictureBox->Anchor = System::Windows::Forms::AnchorStyles::None;
+			this->pictureBox->Location = System::Drawing::Point(0, 30);
 			this->pictureBox->Name = L"pictureBox";
-			this->pictureBox->Size = System::Drawing::Size(1100, 572);
+			this->pictureBox->Size = System::Drawing::Size(1082, 620);
+			this->pictureBox->SizeMode = System::Windows::Forms::PictureBoxSizeMode::Zoom;
 			this->pictureBox->TabIndex = 0;
 			this->pictureBox->TabStop = false;
 			this->pictureBox->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &SeaBattle::pictureBox_Paint);
@@ -160,13 +168,14 @@ namespace CourseWork {
 			// orientation_button
 			// 
 			this->orientation_button->BackColor = System::Drawing::Color::White;
-			this->orientation_button->Font = (gcnew System::Drawing::Font(L"Segoe UI", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->orientation_button->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
-			this->orientation_button->Location = System::Drawing::Point(820, 340);
+			this->orientation_button->Location = System::Drawing::Point(820, 347);
 			this->orientation_button->Name = L"orientation_button";
-			this->orientation_button->Size = System::Drawing::Size(208, 34);
+			this->orientation_button->Size = System::Drawing::Size(208, 39);
 			this->orientation_button->TabIndex = 2;
 			this->orientation_button->Text = L"Повернуть корабли";
+			this->orientation_button->TextAlign = System::Drawing::ContentAlignment::TopCenter;
 			this->orientation_button->UseVisualStyleBackColor = false;
 			this->orientation_button->Visible = false;
 			this->orientation_button->Click += gcnew System::EventHandler(this, &SeaBattle::orientation_button_Click);
@@ -174,21 +183,58 @@ namespace CourseWork {
 			// Placelabel
 			// 
 			this->Placelabel->BackColor = System::Drawing::Color::White;
-			this->Placelabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->Placelabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
 			this->Placelabel->Location = System::Drawing::Point(815, 51);
 			this->Placelabel->Name = L"Placelabel";
-			this->Placelabel->Size = System::Drawing::Size(215, 25);
+			this->Placelabel->Size = System::Drawing::Size(215, 32);
 			this->Placelabel->TabIndex = 3;
 			this->Placelabel->Text = L"Расставьте корабли";
-			this->Placelabel->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+			this->Placelabel->TextAlign = System::Drawing::ContentAlignment::TopCenter;
 			this->Placelabel->Visible = false;
+			// 
+			// playerFieldlabel
+			// 
+			this->playerFieldlabel->BackColor = System::Drawing::Color::White;
+			this->playerFieldlabel->Font = (gcnew System::Drawing::Font(L"Segoe UI Semibold", 13.8F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->playerFieldlabel->Location = System::Drawing::Point(128, 43);
+			this->playerFieldlabel->Name = L"playerFieldlabel";
+			this->playerFieldlabel->Size = System::Drawing::Size(212, 33);
+			this->playerFieldlabel->TabIndex = 4;
+			this->playerFieldlabel->Text = L"Игрок";
+			this->playerFieldlabel->TextAlign = System::Drawing::ContentAlignment::TopCenter;
+			// 
+			// compFieldlabel
+			// 
+			this->compFieldlabel->BackColor = System::Drawing::Color::White;
+			this->compFieldlabel->Font = (gcnew System::Drawing::Font(L"Segoe UI Semibold", 13.8F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->compFieldlabel->Location = System::Drawing::Point(508, 43);
+			this->compFieldlabel->Name = L"compFieldlabel";
+			this->compFieldlabel->Size = System::Drawing::Size(212, 33);
+			this->compFieldlabel->TabIndex = 5;
+			this->compFieldlabel->Text = L"Компьютер";
+			this->compFieldlabel->TextAlign = System::Drawing::ContentAlignment::TopCenter;
+			// 
+			// Countlabel
+			// 
+			this->Countlabel->BackColor = System::Drawing::Color::White;
+			this->Countlabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->Countlabel->Location = System::Drawing::Point(840, 473);
+			this->Countlabel->Name = L"Countlabel";
+			this->Countlabel->Size = System::Drawing::Size(188, 102);
+			this->Countlabel->TabIndex = 6;
 			// 
 			// SeaBattle
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1082, 553);
+			this->ClientSize = System::Drawing::Size(1082, 653);
+			this->Controls->Add(this->Countlabel);
+			this->Controls->Add(this->compFieldlabel);
+			this->Controls->Add(this->playerFieldlabel);
 			this->Controls->Add(this->Placelabel);
 			this->Controls->Add(this->orientation_button);
 			this->Controls->Add(this->pictureBox);
@@ -221,8 +267,7 @@ private: System::Void pictureBox_Paint(System::Object^ sender, System::Windows::
 	g->Clear(Color::White);
 	DrawFields(g);
 	DrawShips(g);
-	if (rasstanovka)
-		DrawPlacementShips(g);
+	DrawPlacementShips(g);
 }
 
 private: System::Void pictureBox_MouseClick(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
@@ -259,8 +304,8 @@ private: System::Void UserPlacementMenuItem_Click(System::Object^ sender, System
 	s3 = 2;
 	s2 = 3;
 	s1 = 4;
-	game->Start(rasstanovka);
 	timer->Start();
+	game->Start(rasstanovka);
 }
 private: System::Void orientation_button_Click(System::Object^ sender, System::EventArgs^ e) {
 	vert = !vert;
