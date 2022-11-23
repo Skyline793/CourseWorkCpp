@@ -17,12 +17,12 @@ namespace CourseWork {
 	{
 	private:
 		int DXY = 80, H = 30;
-		Drawing::Rectangle ship1, ship2, ship3, ship4;
+		Drawing::Rectangle ship1, ship2, ship3, ship4, field1, field2;
 		int s1, s2, s3, s4;
 		bool selectS1, selectS2, selectS3, selectS4;
 		bool vert, rasstanovka;
 		Game^ game;
-		Image ^wound, ^kill, ^deck, ^miss;
+		Image^ wound, ^ kill, ^ deck, ^ miss;
 		static const cli::array<String^>^ symbols = gcnew cli::array<String^> { "À", "Á", "Â", "Ã", "Ä", "Å", "Æ", "Ç", "È", "Ê" };
 		static const cli::array<String^>^ numbers = gcnew cli::array<String^> { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
 	private: System::Windows::Forms::PictureBox^ pictureBox;
@@ -271,13 +271,13 @@ private: System::Void pictureBox_Paint(System::Object^ sender, System::Windows::
 }
 
 private: System::Void pictureBox_MouseClick(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
-	if (game->IsEndGame()==0 && !rasstanovka)
+	if (game->IsEndGame() == 0 && !rasstanovka)
 	{
-		int MX = e->X;
-		int MY = e->Y;
-		if (MX > DXY + 13 * H && MY > DXY && MX < DXY + 23 * H && MY < DXY + 10 * H && game->IsEndGame() == 0) {
-			int i = (MX - (DXY + 13 * H)) / H;
-			int j = (MY - DXY) / H;
+		if (field2.Contains(e->Location) && game->IsEndGame() == 0) {
+			int mX = e->X;
+			int mY = e->Y;
+			int i = (mX - (DXY + 13 * H)) / H;
+			int j = (mY - DXY) / H;
 			if (game->CompField.GetValue(i, j) >= -1 && game->CompField.GetValue(i, j) <= 4) {
 				game->PlayerMove(i, j);
 			}

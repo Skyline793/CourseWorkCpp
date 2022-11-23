@@ -5,6 +5,10 @@ namespace CourseWork
 	void SeaBattle::DrawFields(Graphics^ g)
 	{
 		Pen^ pen = gcnew Pen(Color::Black, 2);
+		field1 = Rectangle(DXY, DXY, 10 * H, 10 * H);
+		field2 = Rectangle(DXY + 13 * H, DXY, 10 * H, 10 * H);
+		g->DrawRectangle(pen, field1);
+		g->DrawRectangle(pen, field2);
 
 		for (int i = DXY; i <= DXY + 10 * H; i += H)
 		{
@@ -12,9 +16,8 @@ namespace CourseWork
 			g->DrawLine(Pens::Gray, i, DXY, i, DXY + 10 * H);
 			g->DrawLine(Pens::Gray, DXY + 13 * H, i, DXY + 23 * H, i);
 			g->DrawLine(Pens::Gray, i + 13 * H, DXY, i + 13 * H, DXY + 10 * H);
-			g->DrawRectangle(pen, DXY, DXY, 10 * H, 10 * H);
-			g->DrawRectangle(pen, DXY + 13 * H, DXY, 10 * H, 10 * H);
 		}
+		
 		for (int i = 0; i < 10; i++)
 		{
 			g->DrawString(symbols[i], gcnew Drawing::Font("Segoe UI", 12), gcnew Drawing::SolidBrush(Color::Black), DXY + i*H + H / 5, DXY - H);
@@ -150,12 +153,12 @@ namespace CourseWork
 	}
 	void SeaBattle::PlaceShip(MouseEventArgs^ e)
 	{
-		int mX = e->X;
-		int mY = e->Y;
-		int i = (mX - (DXY)) / H;
-		int j = (mY - DXY) / H;
-		if (i >= 0 && i < 10 && j >= 0 && j < 10)
+		if (field1.Contains(e->Location)) 
 		{
+			int mX = e->X;
+			int mY = e->Y;
+			int i = (mX - (DXY)) / H;
+			int j = (mY - DXY) / H;
 			if (s4 != 0 && selectS4)
 			{
 				selectS4 = 0;
