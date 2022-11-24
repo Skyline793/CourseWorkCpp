@@ -233,6 +233,21 @@ bool Game::IsCompMove()
 	return compMove;
 }
 
+int Game::PlayerValue(int i, int j)
+{
+	return PlayerField.GetValue(i, j);
+}
+
+int Game::CompValue(int i, int j)
+{
+	return CompField.GetValue(i, j);
+}
+
+bool Game::PlayerPlacement(int i, int j, int deckCount, bool direction)
+{
+	return PlayerField.UserPlacement(i, j, deckCount, direction);
+}
+
 cli::array<int>^ Game::GetPlayerKillCount()
 {
 	cli::array<int>^ count = PlayerField.GetKillCount();

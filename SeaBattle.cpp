@@ -40,22 +40,22 @@ namespace CourseWork
 	{
 		for (int i = 0; i < 10; i++)
 			for (int j = 0; j < 10; j++) {
-				if (game->PlayerField.GetValue(i, j) >= 1 && game->PlayerField.GetValue(i, j) <= 4)
+				if (game->PlayerValue(i, j) >= 1 && game->PlayerValue(i, j) <= 4)
 					g->DrawImage(deck, DXY + H * i, DXY + H * j, H, H);
-				if (game->PlayerField.GetValue(i, j) >= 8 && game->PlayerField.GetValue(i, j) <= 11)
+				if (game->PlayerValue(i, j) >= 8 && game->PlayerValue(i, j) <= 11)
 					g->DrawImage(wound, DXY + H * i, DXY + H * j, H, H);
-				if (game->PlayerField.GetValue(i, j) >= 15 && game->PlayerField.GetValue(i, j) <= 18)
+				if (game->PlayerValue(i, j) >= 15 && game->PlayerValue(i, j) <= 18)
 					g->DrawImage(kill, DXY + H * i, DXY + H * j, H, H);
-				if (game->PlayerField.GetValue(i, j) == -2 || game->PlayerField.GetValue(i, j) >= 5 && game->PlayerField.GetValue(i, j) <= 7)
+				if (game->PlayerValue(i, j) == -2 || game->PlayerValue(i, j) >= 5 && game->PlayerValue(i, j) <= 7)
 					g->DrawImage(miss, DXY + H * i, DXY + H * j, H, H);
 
-				if (game->CompField.GetValue(i, j) >= 8 && game->CompField.GetValue(i, j) <= 11)
+				if (game->CompValue(i, j) >= 8 && game->CompValue(i, j) <= 11)
 					g->DrawImage(wound, DXY + 13 * H + H * i, DXY + H * j, H, H);
-				if (game->CompField.GetValue(i, j) >= 15 && game->CompField.GetValue(i, j) <= 18)
+				if (game->CompValue(i, j) >= 15 && game->CompValue(i, j) <= 18)
 					g->DrawImage(kill, DXY + 13 * H + H * i, DXY + H * j, H, H);
-				if (game->CompField.GetValue(i, j) >= 5 && game->CompField.GetValue(i, j) <= 7 || game->CompField.GetValue(i, j) == -2)
+				if (game->CompValue(i, j) >= 5 && game->CompValue(i, j) <= 7 || game->CompValue(i, j) == -2)
 					g->DrawImage(miss, DXY + 13 * H + H * i, DXY + H * j, H, H);
-				if (game->IsEndGame() != 0 && game->CompField.GetValue(i, j) >= 1 && game->CompField.GetValue(i, j) <= 4)
+				if (game->IsEndGame() != 0 && game->CompValue(i, j) >= 1 && game->CompValue(i, j) <= 4)
 					g->DrawImage(deck, DXY + 13 * H + H * i, DXY + H * j, H, H);
 			}
 	}
@@ -168,25 +168,25 @@ namespace CourseWork
 			if (s4 != 0 && selectS4)
 			{
 				selectS4 = 0;
-				if (game->PlayerField.UserPlacement(i, j, 4, vert))
+				if (game->PlayerPlacement(i, j, 4, vert))
 					s4--;
 			}
 			if (s3 != 0 && selectS3)
 			{
 				selectS3 = 0;
-				if (game->PlayerField.UserPlacement(i, j, 3, vert))
+				if (game->PlayerPlacement(i, j, 3, vert))
 					s3--;
 			}
 			if (s2 != 0 && selectS2)
 			{
 				selectS2 = 0;
-				if (game->PlayerField.UserPlacement(i, j, 2, vert))
+				if (game->PlayerPlacement(i, j, 2, vert))
 					s2--;
 			}
 			if (s1 != 0 && selectS1)
 			{
 				selectS1 = 0;
-				if (game->PlayerField.UserPlacement(i, j, 1, vert))
+				if (game->PlayerPlacement(i, j, 1, vert))
 					s1--;
 			}
 		}

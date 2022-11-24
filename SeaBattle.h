@@ -37,28 +37,28 @@ namespace CourseWork {
 	private: System::Windows::Forms::Label^ playerFieldlabel;
 	private: System::Windows::Forms::Label^ compFieldlabel;
 	private: System::Windows::Forms::Label^ Countlabel;
+	private: System::Windows::Forms::ToolStripMenuItem^ AuthorMenuItem;
 	private: System::Windows::Forms::Timer^ timer;
 	public:
 		SeaBattle(void)
 		{
-			System::ComponentModel::ComponentResourceManager^ resources = gcnew System::ComponentModel::ComponentResourceManager(SeaBattle::typeid);
+			System::Resources::ResourceManager^ resources = gcnew System::Resources::ResourceManager(SeaBattle::typeid);
 			InitializeComponent();
 			game = gcnew Game();
 			deck = Image::FromFile("deck.png");
 			kill = Image::FromFile("kill.png");
 			wound = Image::FromFile("wound.png");
 			miss = Image::FromFile("miss.png");
-			/*try
-			{
-			deck = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("deck"));
-			kill = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("kill"));
-			wound = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("wound"));
-			miss = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("miss"));
-			}
-			catch (...)
-			{
-				MessageBox::Show("Ошибка при загрузке изображений");
-			}*/
+			//try
+			//{
+			//deck = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("deck"));
+			//kill = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("kill"));
+			//wound = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("wound"));
+			//miss = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("miss"));
+			//}
+			//catch (...)
+			//{
+			//}
 		}
 	protected:
 		/// <summary>
@@ -95,6 +95,7 @@ namespace CourseWork {
 			this->AutoPlacementMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->UserPlacementMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->SpravkaMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->AuthorMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->orientation_button = (gcnew System::Windows::Forms::Button());
 			this->Placelabel = (gcnew System::Windows::Forms::Label());
 			this->playerFieldlabel = (gcnew System::Windows::Forms::Label());
@@ -114,9 +115,9 @@ namespace CourseWork {
 			this->pictureBox->Anchor = System::Windows::Forms::AnchorStyles::None;
 			this->pictureBox->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox.BackgroundImage")));
 			this->pictureBox->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
-			this->pictureBox->Location = System::Drawing::Point(0, 30);
+			this->pictureBox->Location = System::Drawing::Point(0, 27);
 			this->pictureBox->Name = L"pictureBox";
-			this->pictureBox->Size = System::Drawing::Size(1083, 623);
+			this->pictureBox->Size = System::Drawing::Size(1083, 626);
 			this->pictureBox->SizeMode = System::Windows::Forms::PictureBoxSizeMode::Zoom;
 			this->pictureBox->TabIndex = 0;
 			this->pictureBox->TabStop = false;
@@ -125,8 +126,12 @@ namespace CourseWork {
 			// 
 			// menuStrip
 			// 
+			this->menuStrip->BackColor = System::Drawing::SystemColors::ActiveCaption;
 			this->menuStrip->ImageScalingSize = System::Drawing::Size(20, 20);
-			this->menuStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) { this->PlayMenuItem, this->SpravkaMenuItem });
+			this->menuStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
+				this->PlayMenuItem, this->SpravkaMenuItem,
+					this->AuthorMenuItem
+			});
 			this->menuStrip->Location = System::Drawing::Point(0, 0);
 			this->menuStrip->Name = L"menuStrip";
 			this->menuStrip->Size = System::Drawing::Size(1083, 28);
@@ -169,6 +174,12 @@ namespace CourseWork {
 			this->SpravkaMenuItem->Name = L"SpravkaMenuItem";
 			this->SpravkaMenuItem->Size = System::Drawing::Size(81, 24);
 			this->SpravkaMenuItem->Text = L"Справка";
+			// 
+			// AuthorMenuItem
+			// 
+			this->AuthorMenuItem->Name = L"AuthorMenuItem";
+			this->AuthorMenuItem->Size = System::Drawing::Size(95, 24);
+			this->AuthorMenuItem->Text = L"Об авторе";
 			// 
 			// orientation_button
 			// 
@@ -273,6 +284,16 @@ namespace CourseWork {
 
 
 	private: System::Void pictureBox_Paint(System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e) {
+		if (game->IsEndGame() == 1)
+		{
+			timer->Stop();
+			MessageBox::Show("Поздравляем! Вы победили!", "Победа", MessageBoxButtons::OK, MessageBoxIcon::Information);
+		}
+		if (game->IsEndGame() == 2)
+		{
+			timer->Stop();
+			MessageBox::Show("К сожалению, Вы проиграли!", "Поражение", MessageBoxButtons::OK, MessageBoxIcon::Information);
+		}
 		Graphics^ g = e->Graphics;
 		DrawFields(g);
 		DrawRemainingShips(g);
@@ -288,7 +309,7 @@ namespace CourseWork {
 				int mY = e->Y;
 				int i = (mX - (DXY + 13 * H)) / H;
 				int j = (mY - DXY) / H;
-				if (game->CompField.GetValue(i, j) >= -1 && game->CompField.GetValue(i, j) <= 4) {
+				if (game->CompValue(i, j) >= -1 && game->CompValue(i, j) <= 4) {
 					game->PlayerMove(i, j);
 				}
 			}

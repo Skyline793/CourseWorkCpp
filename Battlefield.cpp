@@ -2,6 +2,7 @@
 
 Battlefield::Battlefield()
 {
+	this->Clear();
 }
 
 void Battlefield::Fire(int i, int j)
