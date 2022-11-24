@@ -6,9 +6,9 @@ using namespace std;
 ref class Battlefield
 {
 private:
+	static const int N = 10;
 	cli::array<int, 2>^ field = gcnew cli::array<int, 2>(N, N);
 public:
-	static const int N = 10;
 	Battlefield();
 	void Fire(int i, int j);
 	int GetValue(int i, int j);
@@ -26,5 +26,6 @@ public:
 	bool UserPlacement(int i, int j, int deckCount, bool direction);
 	int SumKilled();
 	void Clear();
+	cli::array<int>^ GetKillCount();
 };
 

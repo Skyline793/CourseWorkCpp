@@ -6,7 +6,10 @@ namespace CourseWork
 	{
 		Pen^ pen = gcnew Pen(Color::Black, 2);
 		field1 = Rectangle(DXY, DXY, 10 * H, 10 * H);
+		Drawing::Font^ font = gcnew Drawing::Font("Segoe UI", 11, FontStyle::Bold);
 		field2 = Rectangle(DXY + 13 * H, DXY, 10 * H, 10 * H);
+		g->FillRectangle(gcnew SolidBrush(Color::White), field1);
+		g->FillRectangle(gcnew SolidBrush(Color::White), field2);
 		g->DrawRectangle(pen, field1);
 		g->DrawRectangle(pen, field2);
 
@@ -17,18 +20,20 @@ namespace CourseWork
 			g->DrawLine(Pens::Gray, DXY + 13 * H, i, DXY + 23 * H, i);
 			g->DrawLine(Pens::Gray, i + 13 * H, DXY, i + 13 * H, DXY + 10 * H);
 		}
-		
+
 		for (int i = 0; i < 10; i++)
 		{
-			g->DrawString(symbols[i], gcnew Drawing::Font("Segoe UI", 12), gcnew Drawing::SolidBrush(Color::Black), DXY + i*H + H / 5, DXY - H);
-			g->DrawString(symbols[i], gcnew Drawing::Font("Segoe UI", 12), gcnew Drawing::SolidBrush(Color::Black), DXY + 13 * H + i*H + H / 4, DXY - H);
-			g->DrawString(numbers[i], gcnew Drawing::Font("Segoe UI", 12), gcnew Drawing::SolidBrush(Color::Black), DXY - H - 6, DXY + i*H);
-			g->DrawString(numbers[i], gcnew Drawing::Font("Segoe UI", 12), gcnew Drawing::SolidBrush(Color::Black), DXY +12*H - 6, DXY + i * H);
+			g->DrawString(symbols[i], font, gcnew Drawing::SolidBrush(Color::Black), DXY + i * H + H / 5, DXY - H);
+			g->DrawString(symbols[i], font, gcnew Drawing::SolidBrush(Color::Black), DXY + 13 * H + i * H + H / 4, DXY - H);
+			g->DrawString(numbers[i], font, gcnew Drawing::SolidBrush(Color::Black), DXY - H - 6, DXY + i * H);
+			g->DrawString(numbers[i], font, gcnew Drawing::SolidBrush(Color::Black), DXY + 12 * H - 6, DXY + i * H);
 		}
-		if (!rasstanovka)
-			this->Countlabel->Text = "Ходов сделано\nИгрок: " + Convert::ToString(game->GetPlayerCount()) + "\nКомпьютер: " + Convert::ToString(game->GetCompCount());
+		if (!rasstanovka) {
+			this->Countlabel->Visible = true;
+			this->Countlabel->Text = "      Ходов сделано\nИгрок: " + Convert::ToString(game->GetPlayerCount()) + "\nКомпьютер: " + Convert::ToString(game->GetCompCount());
+		}
 		else
-			this->Countlabel->Text = "";
+			this->Countlabel->Visible = false;
 	}
 
 	void SeaBattle::DrawShips(Graphics^ g)
@@ -58,6 +63,7 @@ namespace CourseWork
 	{
 		if (rasstanovka)
 		{
+			SolidBrush^ brush = gcnew SolidBrush(Color::White);
 			Placelabel->Visible = true;
 			orientation_button->Visible = true;
 			Pen^ pen = gcnew Pen(Color::Black, 2);
@@ -78,6 +84,7 @@ namespace CourseWork
 			}
 			if (s4 != 0)
 			{
+				g->FillRectangle(brush, ship4);
 				if (selectS4)
 					g->DrawRectangle(selectPen, ship4);
 				else
@@ -85,6 +92,7 @@ namespace CourseWork
 			}
 			if (s3 != 0)
 			{
+				g->FillRectangle(brush, ship3);
 				if (selectS3)
 					g->DrawRectangle(selectPen, ship3);
 				else
@@ -92,6 +100,7 @@ namespace CourseWork
 			}
 			if (s2 != 0)
 			{
+				g->FillRectangle(brush, ship2);
 				if (selectS2)
 					g->DrawRectangle(selectPen, ship2);
 				else
@@ -99,17 +108,14 @@ namespace CourseWork
 			}
 			if (s1 != 0)
 			{
+				g->FillRectangle(brush, ship1);
 				if (selectS1)
 					g->DrawRectangle(selectPen, ship1);
 				else
 					g->DrawRectangle(pen, ship1);
 			}
 
-			if (s1 + s2 + s3 + s4 != 0)
-			{
-				
-			}
-			else
+			if (s1 + s2 + s3 + s4 == 0)
 				rasstanovka = 0;
 		}
 		else
@@ -118,7 +124,7 @@ namespace CourseWork
 			orientation_button->Visible = false;
 
 		}
-		
+
 	}
 	void SeaBattle::SelectShip(MouseEventArgs^ e)
 	{
@@ -153,7 +159,7 @@ namespace CourseWork
 	}
 	void SeaBattle::PlaceShip(MouseEventArgs^ e)
 	{
-		if (field1.Contains(e->Location)) 
+		if (field1.Contains(e->Location))
 		{
 			int mX = e->X;
 			int mY = e->Y;
@@ -184,5 +190,54 @@ namespace CourseWork
 					s1--;
 			}
 		}
+	}
+	void SeaBattle::DrawRemainingShips(Graphics^ g)
+	{
+		Pen^ pen = gcnew Pen(Color::Black, 2);
+		SolidBrush^ brush = gcnew SolidBrush(Color::White);
+		Drawing::Font^ font = gcnew Drawing::Font("Segoe UI", 14, FontStyle::Bold);
+		g->FillRectangle(brush, DXY, DXY + 11 * H, 4 * H, H);
+		g->FillRectangle(brush, DXY, DXY + 12 * H + 10, 3 * H, H);
+		g->FillRectangle(brush, DXY, DXY + 13 * H + 20, 2 * H, H);
+		g->FillRectangle(brush, DXY, DXY + 14 * H + 30, H, H);
+		g->DrawRectangle(pen, DXY, DXY + 11 * H, 4 * H, H);
+		g->DrawRectangle(pen, DXY, DXY + 12 * H + 10, 3 * H, H);
+		g->DrawRectangle(pen, DXY, DXY + 13 * H + 20, 2 * H, H);
+		g->DrawRectangle(pen, DXY, DXY + 14 * H + 30, H, H);
+		cli::array<int>^ playerCount = game->GetPlayerKillCount();
+		g->DrawEllipse(pen, DXY + 4 * H + H / 2, DXY + 11 * H, H, H);
+		g->FillEllipse(brush, DXY + 4 * H + H / 2, DXY + 11 * H, H, H);
+		g->DrawString(Convert::ToString(1 - playerCount[0]), font, gcnew SolidBrush(Color::Green), DXY + 4 * H + 20, DXY + 11 * H);
+		g->DrawEllipse(pen, DXY + 3 * H + H / 2, DXY + 12 * H + 10, H, H);
+		g->FillEllipse(brush, DXY + 3 * H + H / 2, DXY + 12 * H + 10, H, H);
+		g->DrawString(Convert::ToString(2 - playerCount[1]), font, gcnew SolidBrush(Color::Green), DXY + 3 * H + 20, DXY + 12 * H + 8);
+		g->DrawEllipse(pen, DXY + 2 * H + H / 2, DXY + 13 * H + 20, H, H);
+		g->FillEllipse(brush, DXY + 2 * H + H / 2, DXY + 13 * H + 20, H, H);
+		g->DrawString(Convert::ToString(3 - playerCount[2]), font, gcnew SolidBrush(Color::Green), DXY + 2 * H + 20, DXY + 13 * H + 18);
+		g->DrawEllipse(pen, DXY + H + H / 2, DXY + 14 * H + 30, H, H);
+		g->FillEllipse(brush, DXY + H + H / 2, DXY + 14 * H + 30, H, H);
+		g->DrawString(Convert::ToString(4 - playerCount[3]), font, gcnew SolidBrush(Color::Green), DXY + H + 20, DXY + 14 * H + 28);
+
+		g->FillRectangle(brush, DXY + 13 * H, DXY + 11 * H, 4 * H, H);
+		g->FillRectangle(brush, DXY + 13 * H, DXY + 12 * H + 10, 3 * H, H);
+		g->FillRectangle(brush, DXY + 13 * H, DXY + 13 * H + 20, 2 * H, H);
+		g->FillRectangle(brush, DXY + 13 * H, DXY + 14 * H + 30, H, H);
+		g->DrawRectangle(pen, DXY + 13 * H, DXY + 11 * H, 4 * H, H);
+		g->DrawRectangle(pen, DXY + 13 * H, DXY + 12 * H + 10, 3 * H, H);
+		g->DrawRectangle(pen, DXY + 13 * H, DXY + 13 * H + 20, 2 * H, H);
+		g->DrawRectangle(pen, DXY + 13 * H, DXY + 14 * H + 30, H, H);
+		cli::array<int>^ compCount = game->GetCompKillCount();
+		g->DrawEllipse(pen, DXY + 17 * H + H / 2, DXY + 11 * H, H, H);
+		g->FillEllipse(brush, DXY + 17 * H + H / 2, DXY + 11 * H, H, H);
+		g->DrawString(Convert::ToString(1 - compCount[0]), font, gcnew SolidBrush(Color::Red), DXY + 17 * H + 20, DXY + 11 * H);
+		g->DrawEllipse(pen, DXY + 16 * H + H / 2, DXY + 12 * H+10, H, H);
+		g->FillEllipse(brush, DXY + 16 * H + H / 2, DXY + 12 * H+10, H, H);
+		g->DrawString(Convert::ToString(2 - compCount[1]), font, gcnew SolidBrush(Color::Red), DXY + 16 * H + 20, DXY + 12 * H+8);
+		g->DrawEllipse(pen, DXY + 15 * H + H / 2, DXY + 13 * H+20, H, H);
+		g->FillEllipse(brush, DXY + 15 * H + H / 2, DXY + 13 * H+20, H, H);
+		g->DrawString(Convert::ToString(3 - compCount[2]), font, gcnew SolidBrush(Color::Red), DXY + 15 * H + 20, DXY + 13 * H+18);
+		g->DrawEllipse(pen, DXY + 14 * H + H / 2, DXY + 14 * H+30, H, H);
+		g->FillEllipse(brush, DXY + 14 * H + H / 2, DXY + 14 * H+30, H, H);
+		g->DrawString(Convert::ToString(4 - compCount[3]), font, gcnew SolidBrush(Color::Red), DXY + 14 * H + 20, DXY + 14 * H+28);
 	}
 }

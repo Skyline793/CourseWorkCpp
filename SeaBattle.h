@@ -41,21 +41,23 @@ namespace CourseWork {
 	public:
 		SeaBattle(void)
 		{
-			System::ComponentModel::ComponentResourceManager^ resourses = gcnew System::ComponentModel::ComponentResourceManager(SeaBattle::typeid);
+			System::ComponentModel::ComponentResourceManager^ resources = gcnew System::ComponentModel::ComponentResourceManager(SeaBattle::typeid);
 			InitializeComponent();
 			game = gcnew Game();
 			deck = Image::FromFile("deck.png");
 			kill = Image::FromFile("kill.png");
 			wound = Image::FromFile("wound.png");
 			miss = Image::FromFile("miss.png");
-			/*try {
-				deck = cli::safe_cast<System::Drawing::Image^>(resourses->GetObject("deck"));
-				kill = cli::safe_cast<System::Drawing::Image^>(resourses->GetObject("kill"));
-				wound = cli::safe_cast<System::Drawing::Image^>(resourses->GetObject("wound"));
-				miss = cli::safe_cast<System::Drawing::Image^>(resourses->GetObject("miss"));
+			/*try
+			{
+			deck = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("deck"));
+			kill = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("kill"));
+			wound = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("wound"));
+			miss = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("miss"));
 			}
 			catch (...)
 			{
+				MessageBox::Show("Ошибка при загрузке изображений");
 			}*/
 		}
 	protected:
@@ -84,6 +86,7 @@ namespace CourseWork {
 		void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
+			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(SeaBattle::typeid));
 			this->timer = (gcnew System::Windows::Forms::Timer(this->components));
 			this->pictureBox = (gcnew System::Windows::Forms::PictureBox());
 			this->menuStrip = (gcnew System::Windows::Forms::MenuStrip());
@@ -109,9 +112,11 @@ namespace CourseWork {
 			// pictureBox
 			// 
 			this->pictureBox->Anchor = System::Windows::Forms::AnchorStyles::None;
+			this->pictureBox->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox.BackgroundImage")));
+			this->pictureBox->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->pictureBox->Location = System::Drawing::Point(0, 30);
 			this->pictureBox->Name = L"pictureBox";
-			this->pictureBox->Size = System::Drawing::Size(1082, 620);
+			this->pictureBox->Size = System::Drawing::Size(1083, 623);
 			this->pictureBox->SizeMode = System::Windows::Forms::PictureBoxSizeMode::Zoom;
 			this->pictureBox->TabIndex = 0;
 			this->pictureBox->TabStop = false;
@@ -124,7 +129,7 @@ namespace CourseWork {
 			this->menuStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) { this->PlayMenuItem, this->SpravkaMenuItem });
 			this->menuStrip->Location = System::Drawing::Point(0, 0);
 			this->menuStrip->Name = L"menuStrip";
-			this->menuStrip->Size = System::Drawing::Size(1082, 28);
+			this->menuStrip->Size = System::Drawing::Size(1083, 28);
 			this->menuStrip->TabIndex = 1;
 			this->menuStrip->Text = L"menuStrip1";
 			// 
@@ -172,7 +177,7 @@ namespace CourseWork {
 				static_cast<System::Byte>(204)));
 			this->orientation_button->Location = System::Drawing::Point(820, 347);
 			this->orientation_button->Name = L"orientation_button";
-			this->orientation_button->Size = System::Drawing::Size(208, 39);
+			this->orientation_button->Size = System::Drawing::Size(208, 38);
 			this->orientation_button->TabIndex = 2;
 			this->orientation_button->Text = L"Повернуть корабли";
 			this->orientation_button->TextAlign = System::Drawing::ContentAlignment::TopCenter;
@@ -222,16 +227,16 @@ namespace CourseWork {
 			this->Countlabel->BackColor = System::Drawing::Color::White;
 			this->Countlabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
-			this->Countlabel->Location = System::Drawing::Point(840, 473);
+			this->Countlabel->Location = System::Drawing::Point(820, 442);
 			this->Countlabel->Name = L"Countlabel";
-			this->Countlabel->Size = System::Drawing::Size(188, 102);
+			this->Countlabel->Size = System::Drawing::Size(208, 95);
 			this->Countlabel->TabIndex = 6;
 			// 
 			// SeaBattle
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1082, 653);
+			this->ClientSize = System::Drawing::Size(1083, 653);
 			this->Controls->Add(this->Countlabel);
 			this->Controls->Add(this->compFieldlabel);
 			this->Controls->Add(this->playerFieldlabel);
@@ -239,9 +244,12 @@ namespace CourseWork {
 			this->Controls->Add(this->orientation_button);
 			this->Controls->Add(this->pictureBox);
 			this->Controls->Add(this->menuStrip);
+			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			this->MainMenuStrip = this->menuStrip;
+			this->MaximumSize = System::Drawing::Size(1101, 700);
+			this->MinimumSize = System::Drawing::Size(1101, 700);
 			this->Name = L"SeaBattle";
-			this->Text = L"SeaBattle";
+			this->Text = L"Морской бой";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox))->EndInit();
 			this->menuStrip->ResumeLayout(false);
 			this->menuStrip->PerformLayout();
@@ -260,55 +268,60 @@ namespace CourseWork {
 	private: void SelectShip(MouseEventArgs^ e);
 
 	private: void PlaceShip(MouseEventArgs^ e);
-	
 
-private: System::Void pictureBox_Paint(System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e) {
-	Graphics^ g = e->Graphics;
-	g->Clear(Color::White);
-	DrawFields(g);
-	DrawShips(g);
-	DrawPlacementShips(g);
-}
+	private: void DrawRemainingShips(Graphics^ g);
 
-private: System::Void pictureBox_MouseClick(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
-	if (game->IsEndGame() == 0 && !rasstanovka)
-	{
-		if (field2.Contains(e->Location) && game->IsEndGame() == 0) {
-			int mX = e->X;
-			int mY = e->Y;
-			int i = (mX - (DXY + 13 * H)) / H;
-			int j = (mY - DXY) / H;
-			if (game->CompField.GetValue(i, j) >= -1 && game->CompField.GetValue(i, j) <= 4) {
-				game->PlayerMove(i, j);
+
+	private: System::Void pictureBox_Paint(System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e) {
+		Graphics^ g = e->Graphics;
+		DrawFields(g);
+		DrawRemainingShips(g);
+		DrawShips(g);
+		DrawPlacementShips(g);
+	}
+
+	private: System::Void pictureBox_MouseClick(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
+		if (game->IsEndGame() == 0 && !rasstanovka)
+		{
+			if (field2.Contains(e->Location) && game->IsEndGame() == 0) {
+				int mX = e->X;
+				int mY = e->Y;
+				int i = (mX - (DXY + 13 * H)) / H;
+				int j = (mY - DXY) / H;
+				if (game->CompField.GetValue(i, j) >= -1 && game->CompField.GetValue(i, j) <= 4) {
+					game->PlayerMove(i, j);
+				}
 			}
 		}
+		if (rasstanovka) {
+			SelectShip(e);
+			PlaceShip(e);
+		}
 	}
-	if (rasstanovka) {
-		SelectShip(e);
-		PlaceShip(e);
-	}
-}
 
-private: System::Void timer_Tick(System::Object^ sender, System::EventArgs^ e) {
-	this->pictureBox->Invalidate();
-}
-private: System::Void AutoPlacementMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
-	rasstanovka = 0;
-	timer->Start();
-	game->Start(rasstanovka);
-}
-private: System::Void UserPlacementMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
-	rasstanovka = 1;
-	vert = 1;
-	s4 = 1;
-	s3 = 2;
-	s2 = 3;
-	s1 = 4;
-	timer->Start();
-	game->Start(rasstanovka);
-}
-private: System::Void orientation_button_Click(System::Object^ sender, System::EventArgs^ e) {
-	vert = !vert;
-}
-};
+	private: System::Void timer_Tick(System::Object^ sender, System::EventArgs^ e) {
+		this->pictureBox->Invalidate();
+	}
+
+	private: System::Void AutoPlacementMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
+		rasstanovka = 0;
+		timer->Start();
+		game->Start(rasstanovka);
+	}
+
+	private: System::Void UserPlacementMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
+		rasstanovka = 1;
+		vert = 1;
+		s4 = 1;
+		s3 = 2;
+		s2 = 3;
+		s1 = 4;
+		timer->Start();
+		game->Start(rasstanovka);
+	}
+
+	private: System::Void orientation_button_Click(System::Object^ sender, System::EventArgs^ e) {
+		vert = !vert;
+	}
+	};
 }
