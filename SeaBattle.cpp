@@ -28,7 +28,8 @@ namespace CourseWork
 			g->DrawString(numbers[i], font, gcnew Drawing::SolidBrush(Color::Black), DXY - H - 6, DXY + i * H);
 			g->DrawString(numbers[i], font, gcnew Drawing::SolidBrush(Color::Black), DXY + 12 * H - 6, DXY + i * H);
 		}
-		if (!rasstanovka) {
+		if (!rasstanovka) 
+		{
 			this->Countlabel->Visible = true;
 			this->Countlabel->Text = "      Ходов сделано\nИгрок: " + Convert::ToString(game->GetPlayerCount()) + "\nКомпьютер: " + Convert::ToString(game->GetCompCount());
 		}
@@ -63,9 +64,9 @@ namespace CourseWork
 	{
 		if (rasstanovka)
 		{
-			SolidBrush^ brush = gcnew SolidBrush(Color::White);
 			Placelabel->Visible = true;
 			orientation_button->Visible = true;
+			SolidBrush^ brush = gcnew SolidBrush(Color::White);
 			Pen^ pen = gcnew Pen(Color::Black, 2);
 			Pen^ selectPen = gcnew Pen(Color::Green, 4);
 			if (vert)
@@ -207,7 +208,7 @@ namespace CourseWork
 		cli::array<int>^ playerCount = game->GetPlayerKillCount();
 		g->DrawEllipse(pen, DXY + 4 * H + H / 2, DXY + 11 * H, H, H);
 		g->FillEllipse(brush, DXY + 4 * H + H / 2, DXY + 11 * H, H, H);
-		g->DrawString(Convert::ToString(1 - playerCount[0]), font, gcnew SolidBrush(Color::Green), DXY + 4 * H + 20, DXY + 11 * H);
+		g->DrawString(Convert::ToString(1 - playerCount[0]), font, gcnew SolidBrush(Color::Green), DXY + 4 * H + 20, DXY + 11 * H-2);
 		g->DrawEllipse(pen, DXY + 3 * H + H / 2, DXY + 12 * H + 10, H, H);
 		g->FillEllipse(brush, DXY + 3 * H + H / 2, DXY + 12 * H + 10, H, H);
 		g->DrawString(Convert::ToString(2 - playerCount[1]), font, gcnew SolidBrush(Color::Green), DXY + 3 * H + 20, DXY + 12 * H + 8);
@@ -229,7 +230,7 @@ namespace CourseWork
 		cli::array<int>^ compCount = game->GetCompKillCount();
 		g->DrawEllipse(pen, DXY + 17 * H + H / 2, DXY + 11 * H, H, H);
 		g->FillEllipse(brush, DXY + 17 * H + H / 2, DXY + 11 * H, H, H);
-		g->DrawString(Convert::ToString(1 - compCount[0]), font, gcnew SolidBrush(Color::Red), DXY + 17 * H + 20, DXY + 11 * H);
+		g->DrawString(Convert::ToString(1 - compCount[0]), font, gcnew SolidBrush(Color::Red), DXY + 17 * H + 20, DXY + 11 * H-2);
 		g->DrawEllipse(pen, DXY + 16 * H + H / 2, DXY + 12 * H+10, H, H);
 		g->FillEllipse(brush, DXY + 16 * H + H / 2, DXY + 12 * H+10, H, H);
 		g->DrawString(Convert::ToString(2 - compCount[1]), font, gcnew SolidBrush(Color::Red), DXY + 16 * H + 20, DXY + 12 * H+8);

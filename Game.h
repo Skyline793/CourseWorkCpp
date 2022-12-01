@@ -8,8 +8,6 @@ ref class Game
 {
 	Battlefield PlayerField, CompField;
 	int endGame; //0 игра идет, 1 игрок победил, 2 компьютер победил
-	int P1, P2, P3, P4;
-	int C1, C2, C3, C4;
 	int playerCount, compCount;
 	bool playerMove, compMove;
 public:

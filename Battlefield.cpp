@@ -25,19 +25,17 @@ bool Battlefield::InField(int i, int j)
 
 void Battlefield::TestKilled(int i, int j)
 {
-	if (field[i, j] == 8) { //Если однопалубный
+	if (field[i, j] == 8)
+	{
 		field[i, j] += 7; //прибавляем к убитому +7
 		SurroundKilledDeck(i, j);//Уменьшаем окружение убитого на 1
 	}
-	else if (field[i, j] == 9) {
+	if (field[i, j] == 9)
 		AnalizeKill(i, j, 2);
-	}
-	else if (field[i, j] == 10) {
+	if (field[i, j] == 10)
 		AnalizeKill(i, j, 3);
-	}
-	else if (field[i, j] == 11) {
+	if (field[i, j] == 11)
 		AnalizeKill(i, j, 4);
-	}
 }
 
 void Battlefield::AnalizeKill(int i, int j, int deckCount)
@@ -47,7 +45,7 @@ void Battlefield::AnalizeKill(int i, int j, int deckCount)
 		for (int y = j - (deckCount - 1); y <= j + (deckCount - 1); y++)
 		{
 			if (InField(x, y))
-				if(field[x, y] == deckCount + 7)
+				if (field[x, y] == deckCount + 7)
 					woundCount++;
 		}
 	if (woundCount == deckCount)
@@ -55,7 +53,7 @@ void Battlefield::AnalizeKill(int i, int j, int deckCount)
 			for (int y = j - (deckCount - 1); y <= j + (deckCount - 1); y++)
 			{
 				if (InField(x, y))
-					if(field[x, y] == deckCount + 7)
+					if (field[x, y] == deckCount + 7)
 					{
 						field[x, y] += 7;
 						SurroundKilledDeck(x, y);
@@ -84,7 +82,8 @@ void Battlefield::SurroundKilledDeck(int i, int j)
 
 bool Battlefield::TestNewDeck(int i, int j)
 {
-	if (InField(i, j)) {
+	if (InField(i, j))
+	{
 		if (field[i, j] == 0 || field[i, j] == -2)
 			return 1;
 		else
@@ -100,7 +99,8 @@ void Battlefield::ShipAutoPlacement(int deckCount)
 	int i, j;
 	int direction;
 	bool flag = 0;
-	while (true) {
+	while (true)
+	{
 		i = rand() % 10;
 		j = rand() % 10;
 		direction = rand() % 4; //0 вверх, 1 вправо, 2 вниз, 3 влево
@@ -262,8 +262,8 @@ void Battlefield::Clear()
 cli::array<int>^ Battlefield::GetKillCount()
 {
 	cli::array<int>^ count;
-	int s1=0, s2=0, s3=0, s4=0;
-	for(int i=0; i<N; i++)
+	int s1 = 0, s2 = 0, s3 = 0, s4 = 0;
+	for (int i = 0; i < N; i++)
 		for (int j = 0; j < N; j++)
 		{
 			if (field[i, j] == 15)

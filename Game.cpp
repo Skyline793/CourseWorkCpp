@@ -20,7 +20,6 @@ void Game::Start(int rasstanovka)
 
 bool Game::CompMove()
 {
-	//if (endGame != 0 || !compMove) return 0;
 	compCount++;
 	srand(time(NULL));
 	bool hit = 0;
