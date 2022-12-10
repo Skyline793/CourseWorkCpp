@@ -1,7 +1,9 @@
 #pragma once
 #include <iostream>
 using namespace std;
+using System::SerializableAttribute;
 
+[Serializable]
 ref class Battlefield
 {
 private:

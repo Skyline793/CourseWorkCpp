@@ -9,6 +9,8 @@ namespace CourseWork {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::Runtime::Serialization::Formatters::Binary;
+	using namespace System::IO;
 
 	/// <summary>
 	/// Сводка для SeaBattle
@@ -17,8 +19,8 @@ namespace CourseWork {
 	{
 	private:
 		Game^ game;
-		int DXY = 80;
-		int H = 30;
+		const int DXY = 80;
+		const int H = 30;
 		Drawing::Rectangle ship1, ship2, ship3, ship4;
 		Drawing::Rectangle field1, field2;
 		int s1, s2, s3, s4;
@@ -40,7 +42,15 @@ namespace CourseWork {
 	private: System::Windows::Forms::Label^ playerFieldlabel;
 	private: System::Windows::Forms::Label^ compFieldlabel;
 	private: System::Windows::Forms::Label^ Countlabel;
-	private: System::Windows::Forms::ToolStripMenuItem^ AuthorMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^ ProgramMenuItem;
+
+
+	private: System::Windows::Forms::ToolStripMenuItem^ FileMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^ SaveMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^ LoadMenuItem;
+	private: System::Windows::Forms::SaveFileDialog^ saveFileDialog;
+	private: System::Windows::Forms::OpenFileDialog^ openFileDialog;
+
 	private: System::Windows::Forms::Timer^ timer;
 	public:
 		SeaBattle(void)
@@ -98,19 +108,24 @@ namespace CourseWork {
 			this->AutoPlacementMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->UserPlacementMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->SpravkaMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->AuthorMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->ProgramMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->FileMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->SaveMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->LoadMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->orientation_button = (gcnew System::Windows::Forms::Button());
 			this->Placelabel = (gcnew System::Windows::Forms::Label());
 			this->playerFieldlabel = (gcnew System::Windows::Forms::Label());
 			this->compFieldlabel = (gcnew System::Windows::Forms::Label());
 			this->Countlabel = (gcnew System::Windows::Forms::Label());
+			this->saveFileDialog = (gcnew System::Windows::Forms::SaveFileDialog());
+			this->openFileDialog = (gcnew System::Windows::Forms::OpenFileDialog());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox))->BeginInit();
 			this->menuStrip->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// timer
 			// 
-			this->timer->Interval = 1;
+			this->timer->Interval = 200;
 			this->timer->Tick += gcnew System::EventHandler(this, &SeaBattle::timer_Tick);
 			// 
 			// pictureBox
@@ -131,9 +146,9 @@ namespace CourseWork {
 			// 
 			this->menuStrip->BackColor = System::Drawing::SystemColors::ActiveCaption;
 			this->menuStrip->ImageScalingSize = System::Drawing::Size(20, 20);
-			this->menuStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
-				this->PlayMenuItem, this->SpravkaMenuItem,
-					this->AuthorMenuItem
+			this->menuStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {
+				this->PlayMenuItem, this->FileMenuItem,
+					this->SpravkaMenuItem, this->ProgramMenuItem
 			});
 			this->menuStrip->Location = System::Drawing::Point(0, 0);
 			this->menuStrip->Name = L"menuStrip";
@@ -178,11 +193,35 @@ namespace CourseWork {
 			this->SpravkaMenuItem->Size = System::Drawing::Size(81, 24);
 			this->SpravkaMenuItem->Text = L"Справка";
 			// 
-			// AuthorMenuItem
+			// ProgramMenuItem
 			// 
-			this->AuthorMenuItem->Name = L"AuthorMenuItem";
-			this->AuthorMenuItem->Size = System::Drawing::Size(95, 24);
-			this->AuthorMenuItem->Text = L"Об авторе";
+			this->ProgramMenuItem->Name = L"ProgramMenuItem";
+			this->ProgramMenuItem->Size = System::Drawing::Size(118, 24);
+			this->ProgramMenuItem->Text = L"О программе";
+			// 
+			// FileMenuItem
+			// 
+			this->FileMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
+				this->SaveMenuItem,
+					this->LoadMenuItem
+			});
+			this->FileMenuItem->Name = L"FileMenuItem";
+			this->FileMenuItem->Size = System::Drawing::Size(108, 24);
+			this->FileMenuItem->Text = L"Сохранение";
+			// 
+			// SaveMenuItem
+			// 
+			this->SaveMenuItem->Name = L"SaveMenuItem";
+			this->SaveMenuItem->Size = System::Drawing::Size(224, 26);
+			this->SaveMenuItem->Text = L"Сохранить игру";
+			this->SaveMenuItem->Click += gcnew System::EventHandler(this, &SeaBattle::SaveMenuItem_Click);
+			// 
+			// LoadMenuItem
+			// 
+			this->LoadMenuItem->Name = L"LoadMenuItem";
+			this->LoadMenuItem->Size = System::Drawing::Size(224, 26);
+			this->LoadMenuItem->Text = L"Загрузить игру";
+			this->LoadMenuItem->Click += gcnew System::EventHandler(this, &SeaBattle::LoadMenuItem_Click);
 			// 
 			// orientation_button
 			// 
@@ -246,6 +285,17 @@ namespace CourseWork {
 			this->Countlabel->Size = System::Drawing::Size(208, 95);
 			this->Countlabel->TabIndex = 6;
 			// 
+			// saveFileDialog
+			// 
+			this->saveFileDialog->CreatePrompt = true;
+			this->saveFileDialog->Filter = L"Bin files (.bin) | *.bin";
+			this->saveFileDialog->InitialDirectory = L"C:";
+			// 
+			// openFileDialog
+			// 
+			this->openFileDialog->Filter = L"Bin files (.bin) | *.bin";
+			this->openFileDialog->InitialDirectory = L"C:";
+			// 
 			// SeaBattle
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
@@ -285,22 +335,13 @@ namespace CourseWork {
 
 	private: void DrawRemainingShips(Graphics^ g);
 
-
 	private: System::Void pictureBox_Paint(System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e) {
-		if (game->IsEndGame() == 1)
-		{
-			timer->Stop();
-			MessageBox::Show("Поздравляем! Вы победили!", "Победа", MessageBoxButtons::OK, MessageBoxIcon::Information);
-		}
-		if (game->IsEndGame() == 2)
-		{
-			timer->Stop();
-			MessageBox::Show("К сожалению, Вы проиграли!", "Поражение", MessageBoxButtons::OK, MessageBoxIcon::Information);
-		}
+
 		Graphics^ g = e->Graphics;
 		DrawFields(g);
-		DrawRemainingShips(g);
 		DrawShips(g);
+		if (!rasstanovka)
+			DrawRemainingShips(g);
 		DrawPlacementShips(g);
 	}
 
@@ -318,7 +359,7 @@ namespace CourseWork {
 				}
 			}
 		}
-		if (rasstanovka) 
+		if (rasstanovka)
 		{
 			SelectShip(e);
 			PlaceShip(e);
@@ -326,7 +367,21 @@ namespace CourseWork {
 	}
 
 	private: System::Void timer_Tick(System::Object^ sender, System::EventArgs^ e) {
-		this->pictureBox->Invalidate();
+		if (game->IsEndGame() == 1)
+		{
+			timer->Stop();
+			MessageBox::Show("Поздравляем! Вы победили!", "Победа", MessageBoxButtons::OK, MessageBoxIcon::Information);
+		}
+		if (game->IsEndGame() == 2)
+		{
+			timer->Stop();
+			MessageBox::Show("К сожалению, Вы проиграли!", "Поражение", MessageBoxButtons::OK, MessageBoxIcon::Information);
+		}
+		if (rasstanovka)
+			this->SaveMenuItem->Enabled = false;
+		else
+			this->SaveMenuItem->Enabled = true;
+		this->pictureBox->Refresh();
 	}
 
 	private: System::Void AutoPlacementMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
@@ -348,6 +403,43 @@ namespace CourseWork {
 
 	private: System::Void orientation_button_Click(System::Object^ sender, System::EventArgs^ e) {
 		vert = !vert;
+	}
+
+	private: System::Void SaveMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
+		try {
+			if (saveFileDialog->ShowDialog() == Windows::Forms::DialogResult::OK)
+			{
+				String^ filename = saveFileDialog->FileName;
+				FileStream^ fs = File::Create(filename);
+				BinaryFormatter^ bf = gcnew BinaryFormatter();
+				bf->Serialize(fs, game);
+				fs->Close();
+				saveFileDialog->FileName = "";
+			}
+		}
+		catch (...)
+		{
+			MessageBox::Show("Возникла ошибка при сохранении игры!", "Ошибка сохранения", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		}
+	}
+	private: System::Void LoadMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
+		try {
+			if (openFileDialog->ShowDialog() == Windows::Forms::DialogResult::OK)
+			{
+				String^ filename = openFileDialog->FileName;
+				FileStream^ fs = File::OpenRead(filename);
+				BinaryFormatter^ bf = gcnew BinaryFormatter();
+				game = (Game^)(bf->Deserialize(fs));
+				fs->Close();
+				openFileDialog->FileName = "";
+				timer->Start();
+				rasstanovka = 0;
+			}
+		}
+		catch (...)
+		{
+			MessageBox::Show("Возникла ошибка при загрузке игры!", "Ошибка загрузки", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		}
 	}
 	};
 }

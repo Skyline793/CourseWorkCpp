@@ -3,7 +3,9 @@
 #include<iostream>
 
 using namespace std;
+using System::SerializableAttribute;
 
+[Serializable]
 ref class Game
 {
 	Battlefield PlayerField, CompField;
