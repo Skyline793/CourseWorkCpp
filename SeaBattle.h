@@ -57,6 +57,7 @@ namespace CourseWork {
 	public:
 		SeaBattle(void)
 		{
+			
 			System::Resources::ResourceManager^ resources = gcnew System::Resources::ResourceManager(SeaBattle::typeid);
 			InitializeComponent();
 			game = gcnew Game();
@@ -155,7 +156,7 @@ namespace CourseWork {
 			});
 			this->menuStrip->Location = System::Drawing::Point(0, 0);
 			this->menuStrip->Name = L"menuStrip";
-			this->menuStrip->Size = System::Drawing::Size(1083, 28);
+			this->menuStrip->Size = System::Drawing::Size(1083, 30);
 			this->menuStrip->TabIndex = 1;
 			this->menuStrip->Text = L"menuStrip1";
 			// 
@@ -163,7 +164,7 @@ namespace CourseWork {
 			// 
 			this->PlayMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->PVEMenuItem });
 			this->PlayMenuItem->Name = L"PlayMenuItem";
-			this->PlayMenuItem->Size = System::Drawing::Size(71, 24);
+			this->PlayMenuItem->Size = System::Drawing::Size(71, 26);
 			this->PlayMenuItem->Text = L"Играть";
 			// 
 			// PVEMenuItem
@@ -197,7 +198,7 @@ namespace CourseWork {
 					this->LoadMenuItem
 			});
 			this->FileMenuItem->Name = L"FileMenuItem";
-			this->FileMenuItem->Size = System::Drawing::Size(108, 24);
+			this->FileMenuItem->Size = System::Drawing::Size(108, 26);
 			this->FileMenuItem->Text = L"Сохранение";
 			// 
 			// SaveMenuItem
@@ -217,13 +218,13 @@ namespace CourseWork {
 			// SpravkaMenuItem
 			// 
 			this->SpravkaMenuItem->Name = L"SpravkaMenuItem";
-			this->SpravkaMenuItem->Size = System::Drawing::Size(81, 24);
+			this->SpravkaMenuItem->Size = System::Drawing::Size(81, 26);
 			this->SpravkaMenuItem->Text = L"Справка";
 			// 
 			// ProgramMenuItem
 			// 
 			this->ProgramMenuItem->Name = L"ProgramMenuItem";
-			this->ProgramMenuItem->Size = System::Drawing::Size(118, 24);
+			this->ProgramMenuItem->Size = System::Drawing::Size(118, 26);
 			this->ProgramMenuItem->Text = L"О программе";
 			// 
 			// orientation_button

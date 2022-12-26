@@ -4,6 +4,7 @@
 
 using namespace std;
 using System::SerializableAttribute;
+using namespace System::Threading;
 
 [Serializable]
 ref class Game
@@ -13,8 +14,7 @@ ref class Game
 	int playerCount, compCount;
 	bool playerMove, compMove;
 public:
-	
-	Game();
+	void Run();
 	void Start(int rasstanovka);
 	bool CompMove();
 	void PlayerMove(int i, int j);

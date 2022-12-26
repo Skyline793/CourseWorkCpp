@@ -1,9 +1,5 @@
 #include "Game.h"
 
-Game::Game()
-{
-}
-
 void Game::Start(int rasstanovka)
 {
 	endGame = 0;
@@ -182,16 +178,25 @@ void Game::PlayerMove(int i, int j)
 	CompField.Fire(i, j);
 	CompField.TestKilled(i, j);
 	IsEndGame();
+	Thread^ thread = gcnew Thread(gcnew ThreadStart(this, &Game::Run));
+
 	if (CompField.GetValue(i, j) < 8)
 	{
-		playerMove = 0;
-		compMove = 1;
-		while (compMove)
-		{
-			compMove = CompMove();
-		}
-		playerMove = 1;
+		thread->Start();
 	}
+}
+
+void Game::Run()
+{
+	Thread^ current = Thread::CurrentThread;
+	playerMove = 0;
+	compMove = 1;
+	while (compMove)
+	{
+		current->Sleep(600);
+		compMove = CompMove();
+	}
+	playerMove = 1;
 }
 
 int Game::IsEndGame()
