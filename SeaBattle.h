@@ -50,6 +50,8 @@ namespace CourseWork {
 	private: System::Windows::Forms::ToolStripMenuItem^ LoadMenuItem;
 	private: System::Windows::Forms::SaveFileDialog^ saveFileDialog;
 	private: System::Windows::Forms::OpenFileDialog^ openFileDialog;
+	private: System::Windows::Forms::Button^ Clearbutton;
+
 
 	private: System::Windows::Forms::Timer^ timer;
 	public:
@@ -107,11 +109,11 @@ namespace CourseWork {
 			this->PVEMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->AutoPlacementMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->UserPlacementMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->SpravkaMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->ProgramMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->FileMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->SaveMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->LoadMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->SpravkaMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->ProgramMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->orientation_button = (gcnew System::Windows::Forms::Button());
 			this->Placelabel = (gcnew System::Windows::Forms::Label());
 			this->playerFieldlabel = (gcnew System::Windows::Forms::Label());
@@ -119,6 +121,7 @@ namespace CourseWork {
 			this->Countlabel = (gcnew System::Windows::Forms::Label());
 			this->saveFileDialog = (gcnew System::Windows::Forms::SaveFileDialog());
 			this->openFileDialog = (gcnew System::Windows::Forms::OpenFileDialog());
+			this->Clearbutton = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox))->BeginInit();
 			this->menuStrip->SuspendLayout();
 			this->SuspendLayout();
@@ -187,18 +190,6 @@ namespace CourseWork {
 			this->UserPlacementMenuItem->Text = L"Ручная расстановка";
 			this->UserPlacementMenuItem->Click += gcnew System::EventHandler(this, &SeaBattle::UserPlacementMenuItem_Click);
 			// 
-			// SpravkaMenuItem
-			// 
-			this->SpravkaMenuItem->Name = L"SpravkaMenuItem";
-			this->SpravkaMenuItem->Size = System::Drawing::Size(81, 24);
-			this->SpravkaMenuItem->Text = L"Справка";
-			// 
-			// ProgramMenuItem
-			// 
-			this->ProgramMenuItem->Name = L"ProgramMenuItem";
-			this->ProgramMenuItem->Size = System::Drawing::Size(118, 24);
-			this->ProgramMenuItem->Text = L"О программе";
-			// 
 			// FileMenuItem
 			// 
 			this->FileMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
@@ -212,16 +203,28 @@ namespace CourseWork {
 			// SaveMenuItem
 			// 
 			this->SaveMenuItem->Name = L"SaveMenuItem";
-			this->SaveMenuItem->Size = System::Drawing::Size(224, 26);
+			this->SaveMenuItem->Size = System::Drawing::Size(201, 26);
 			this->SaveMenuItem->Text = L"Сохранить игру";
 			this->SaveMenuItem->Click += gcnew System::EventHandler(this, &SeaBattle::SaveMenuItem_Click);
 			// 
 			// LoadMenuItem
 			// 
 			this->LoadMenuItem->Name = L"LoadMenuItem";
-			this->LoadMenuItem->Size = System::Drawing::Size(224, 26);
+			this->LoadMenuItem->Size = System::Drawing::Size(201, 26);
 			this->LoadMenuItem->Text = L"Загрузить игру";
 			this->LoadMenuItem->Click += gcnew System::EventHandler(this, &SeaBattle::LoadMenuItem_Click);
+			// 
+			// SpravkaMenuItem
+			// 
+			this->SpravkaMenuItem->Name = L"SpravkaMenuItem";
+			this->SpravkaMenuItem->Size = System::Drawing::Size(81, 24);
+			this->SpravkaMenuItem->Text = L"Справка";
+			// 
+			// ProgramMenuItem
+			// 
+			this->ProgramMenuItem->Name = L"ProgramMenuItem";
+			this->ProgramMenuItem->Size = System::Drawing::Size(118, 24);
+			this->ProgramMenuItem->Text = L"О программе";
 			// 
 			// orientation_button
 			// 
@@ -296,11 +299,27 @@ namespace CourseWork {
 			this->openFileDialog->Filter = L"Bin files (.bin) | *.bin";
 			this->openFileDialog->InitialDirectory = L"C:";
 			// 
+			// Clearbutton
+			// 
+			this->Clearbutton->BackColor = System::Drawing::Color::White;
+			this->Clearbutton->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->Clearbutton->Location = System::Drawing::Point(820, 391);
+			this->Clearbutton->Name = L"Clearbutton";
+			this->Clearbutton->Size = System::Drawing::Size(208, 38);
+			this->Clearbutton->TabIndex = 7;
+			this->Clearbutton->Text = L"Очистить поле";
+			this->Clearbutton->TextAlign = System::Drawing::ContentAlignment::TopCenter;
+			this->Clearbutton->UseVisualStyleBackColor = false;
+			this->Clearbutton->Visible = false;
+			this->Clearbutton->Click += gcnew System::EventHandler(this, &SeaBattle::Clearbutton_Click);
+			// 
 			// SeaBattle
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1083, 653);
+			this->Controls->Add(this->Clearbutton);
 			this->Controls->Add(this->Countlabel);
 			this->Controls->Add(this->compFieldlabel);
 			this->Controls->Add(this->playerFieldlabel);
@@ -441,5 +460,12 @@ namespace CourseWork {
 			MessageBox::Show("Возникла ошибка при загрузке игры!", "Ошибка загрузки", MessageBoxButtons::OK, MessageBoxIcon::Error);
 		}
 	}
-	};
+	private: System::Void Clearbutton_Click(System::Object^ sender, System::EventArgs^ e) {
+		s4 = 1;
+		s3 = 2;
+		s2 = 3;
+		s1 = 4;
+		this->game->ClearPlayerField();
+	}
+};
 }

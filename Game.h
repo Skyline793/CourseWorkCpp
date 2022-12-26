@@ -23,6 +23,7 @@ public:
 	int GetCompCount();
 	bool IsPlayerMove();
 	bool IsCompMove();
+	void ClearPlayerField();
 	int PlayerValue(int i, int j);
 	int CompValue(int i, int j);
 	bool PlayerPlacement(int i, int j, int deckCount, bool direction);

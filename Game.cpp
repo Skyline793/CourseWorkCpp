@@ -232,6 +232,11 @@ bool Game::IsCompMove()
 	return compMove;
 }
 
+void Game::ClearPlayerField()
+{
+	PlayerField.Clear();
+}
+
 int Game::PlayerValue(int i, int j)
 {
 	return PlayerField.GetValue(i, j);

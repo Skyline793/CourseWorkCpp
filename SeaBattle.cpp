@@ -66,6 +66,7 @@ namespace CourseWork
 		{
 			Placelabel->Visible = true;
 			orientation_button->Visible = true;
+			Clearbutton->Visible = true;
 			SolidBrush^ brush = gcnew SolidBrush(Color::White);
 			Pen^ pen = gcnew Pen(Color::Black, 2);
 			Pen^ selectPen = gcnew Pen(Color::Green, 4);
@@ -123,6 +124,7 @@ namespace CourseWork
 		{
 			Placelabel->Visible = false;
 			orientation_button->Visible = false;
+			Clearbutton->Visible = false;
 
 		}
 
