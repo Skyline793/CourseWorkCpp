@@ -5,273 +5,105 @@
 void Game::Start(int rasstanovka)
 {
 	endGame = 0;
-	playerCount = 0;
-	compCount = 0;
-	playerMove = 1;
-	compMove = 0;
-	PlayerField.Clear();
-	CompField.Clear();
+	firstPlayerCount = 0;
+	secondPlayerCount = 0;
+	firstPlayerMove = 1;
+	secondPlayerMove = 0;
+	firstPlayerField.Clear();
+	secondPlayerField.Clear();
 	if (!rasstanovka)
-		PlayerField.FullAutoPlacement();
-	CompField.FullAutoPlacement();
-}
-
-/*метод хода компьютера
-@return - 1, если ход произведен успешно, 0, если нет*/
-bool Game::CompMove()
-{
-	compCount++;
-	srand(time(NULL));
-	bool hit = 0; //логическая переменная означающая попадание по кораблю
-	bool wound = 0; //логическая переменная означающая подбитую палубу
-	bool horiz = 0; //флаг поиска корабля по горизонтали
-	bool vert = 0; //флаг поиска корабля по вертикали
-	for (int i = 0; i < 10; i++)
-		for (int j = 0; j < 10; j++)
-			if (PlayerField.GetValue(i, j) >= 9 && PlayerField.GetValue(i, j) <= 11) //если ячейка подбитого корабля
-			{
-				wound = 1;
-				//поиск других подбитых палуб корабля по вертикали
-				if ((PlayerField.InField(i, j - 1) && PlayerField.GetValue(i, j - 1) >= 9 && PlayerField.GetValue(i, j - 1) <= 11)
-					|| (PlayerField.InField(i, j + 1) && PlayerField.GetValue(i, j + 1) >= 9 && PlayerField.GetValue(i, j + 1) <= 11)
-					|| (PlayerField.InField(i, j - 2) && PlayerField.GetValue(i, j - 2) >= 9 && PlayerField.GetValue(i, j - 2) <= 11)
-					|| (PlayerField.InField(i, j + 2) && PlayerField.GetValue(i, j + 2) >= 9 && PlayerField.GetValue(i, j + 2) <= 11)
-					|| (PlayerField.InField(i, j - 3) && PlayerField.GetValue(i, j - 3) >= 9 && PlayerField.GetValue(i, j - 3) <= 11)
-					|| (PlayerField.InField(i, j + 3) && PlayerField.GetValue(i, j + 3) >= 9 && PlayerField.GetValue(i, j + 3) <= 11))
-					vert = 1;
-				//если по вертикали найдена подбитая палуба
-				if (vert)
-				{
-					if (PlayerField.InField(i, j + 1) && PlayerField.GetValue(i, j + 1) <= 4 && PlayerField.GetValue(i, j + 1) != -2)
-					{
-						PlayerField.Fire(i, j + 1);
-						PlayerField.TestKilled(i, j + 1);
-						if (PlayerField.GetValue(i, j + 1) >= 8)
-							hit = 1;
-						goto exit;
-					}
-					if (PlayerField.InField(i, j - 1) && PlayerField.GetValue(i, j - 1) <= 4 && PlayerField.GetValue(i, j - 1) != -2)
-					{
-						PlayerField.Fire(i, j - 1);
-						PlayerField.TestKilled(i, j - 1);
-						if (PlayerField.GetValue(i, j - 1) >= 8)
-							hit = 1;
-						goto exit;
-					}
-				}
-				//поиск других подбитых палуб корабля по горизонтали, если не найдены по вертикали
-				if ((PlayerField.InField(i - 1, j) && PlayerField.GetValue(i - 1, j) >= 9 && PlayerField.GetValue(i - 1, j) <= 11)
-					|| (PlayerField.InField(i + 1, j) && PlayerField.GetValue(i + 1, j) >= 9 && PlayerField.GetValue(i + 1, j) <= 11)
-					|| (PlayerField.InField(i - 2, j) && PlayerField.GetValue(i - 2, j) >= 9 && PlayerField.GetValue(i - 2, j) <= 11)
-					|| (PlayerField.InField(i + 2, j) && PlayerField.GetValue(i + 2, j) >= 9 && PlayerField.GetValue(i + 2, j) <= 11)
-					|| (PlayerField.InField(i - 3, j) && PlayerField.GetValue(i - 3, j) >= 9 && PlayerField.GetValue(i - 3, j) <= 11)
-					|| (PlayerField.InField(i + 3, j) && PlayerField.GetValue(i + 3, j) >= 9 && PlayerField.GetValue(i + 3, j) <= 11))
-					horiz = 1;
-				if (horiz)
-				{ 
-					if (PlayerField.InField(i - 1, j) && PlayerField.GetValue(i - 1, j) <= 4 && PlayerField.GetValue(i - 1, j) != -2)
-					{
-						PlayerField.Fire(i - 1, j);
-						PlayerField.TestKilled(i - 1, j);
-						if (PlayerField.GetValue(i - 1, j) >= 8)
-							hit = 1;
-						goto exit;
-					}
-					if (PlayerField.InField(i + 1, j) && PlayerField.GetValue(i + 1, j) <= 4 && PlayerField.GetValue(i + 1, j) != -2)
-					{
-						PlayerField.Fire(i + 1, j);
-						PlayerField.TestKilled(i + 1, j);
-						if (PlayerField.GetValue(i + 1, j) >= 8)
-							hit = 1;
-						goto exit;
-					}
-				}
-				//если вокруг не найдены подбитые палубы
-				if (horiz == 0 && vert == 0)
-					while (1) //бесконечный цикл генерации случайного направления удара
-					{
-						int dir = rand() % 4; //0 вверх, 1 вправо, 2 вниз, 3 влево
-						if (dir == 0 && PlayerField.InField(i - 1, j) && PlayerField.GetValue(i - 1, j) <= 4 && PlayerField.GetValue(i - 1, j) != -2)
-						{
-							PlayerField.Fire(i - 1, j);
-							PlayerField.TestKilled(i - 1, j);
-							if (PlayerField.GetValue(i - 1, j) >= 8)
-								hit = 1;
-							goto exit;
-						}
-						if (dir == 1 && PlayerField.InField(i, j + 1) && PlayerField.GetValue(i, j + 1) <= 4 && PlayerField.GetValue(i, j + 1) != -2)
-						{
-							PlayerField.Fire(i, j + 1);
-							PlayerField.TestKilled(i, j + 1);
-							if (PlayerField.GetValue(i, j + 1) >= 8)
-								hit = 1;
-							goto exit;
-						}
-						if (dir == 2 && PlayerField.InField(i + 1, j) && PlayerField.GetValue(i + 1, j) <= 4 && PlayerField.GetValue(i + 1, j) != -2)
-						{
-							PlayerField.Fire(i + 1, j);
-							PlayerField.TestKilled(i + 1, j);
-							if (PlayerField.GetValue(i + 1, j) >= 8)
-								hit = 1;
-							goto exit;
-						}
-						if (dir == 3 && PlayerField.InField(i, j - 1) && PlayerField.GetValue(i, j - 1) <= 4 && PlayerField.GetValue(i, j - 1) != -2)
-						{
-							PlayerField.Fire(i, j - 1);
-							PlayerField.TestKilled(i, j - 1);
-							if (PlayerField.GetValue(i, j - 1) >= 8)
-								hit = 1;
-							goto exit;
-						}
-					}
-			}
-		//если на поле не найдено подбитых палуб
-	if (wound == 0)
-	{
-		while (1)
-		{
-			// Находим случайную позицию на игровом поле
-			int i = rand() % 10;
-			int j = rand() % 10;
-			//Проверяем, что можно сделать выстрел
-			if ((PlayerField.GetValue(i, j) <= 4) && (PlayerField.GetValue(i, j) != -2))
-			{
-				PlayerField.Fire(i, j);
-				PlayerField.TestKilled(i, j);
-				if (PlayerField.GetValue(i, j) >= 8) {
-					hit = 1;
-				}
-				break;
-			}
-		}
-	}
-exit:
-	return hit; 
-}
-
-/*метод хода игрока
-@param i - номер строки
-@param j - номер столбца*/
-void Game::PlayerMove(int i, int j)
-{
-	playerCount++;
-	CompField.Fire(i, j);
-	CompField.TestKilled(i, j);
-	Thread^ thread = gcnew Thread(gcnew ThreadStart(this, &Game::Run)); //создаем новый поток, в котором будет происходить ход пк
-
-	if (CompField.GetValue(i, j) < 8) //если игрок не попал
-	{
-		thread->Start(); //запкустить поток
-	}
-}
-
-//метод-делегает для потока хода компьютера
-void Game::Run()
-{
-	Thread^ current = Thread::CurrentThread;
-	playerMove = 0;
-	compMove = 1;
-	while (compMove)
-	{
-		current->Sleep(600); //сделать паузу перед ходом пк
-		compMove = CompMove(); //ход пк
-	}
-	playerMove = 1;
+		firstPlayerField.FullAutoPlacement();
+	secondPlayerField.FullAutoPlacement();
 }
 
 /*метод проверки окончания игры
-@return - 0 - игра продолжается, 1 - победил игрок, 2 - победил пк*/
+@return - 0 - игра продолжается, 1 - победил игрок 1, 2 - победил игрок 2*/
 int Game::IsEndGame()
 {
-	if (CompField.SumKilled() == 330) endGame = 1;
-	if (PlayerField.SumKilled() == 330) endGame = 2;
-	if (endGame == 1)
+	if (secondPlayerField.SumKilled() == 330) endGame = 1;
+	if (firstPlayerField.SumKilled() == 330) endGame = 2;
+	if (endGame == 1 || endGame == 2)
 	{
-		playerMove = 0;
-		compMove = 0;
+		firstPlayerMove = 0;
+		secondPlayerMove = 0;
 
-	}
-	else if (endGame == 2)
-	{
-		playerMove = 0;
-		compMove = 0;
 	}
 	return endGame;
 }
 
-/*метод, возвращающий количество сделанных игроком ходов*/
-int Game::GetPlayerCount()
+/*метод, возвращающий количество сделанных игроком 1 ходов*/
+int Game::GetFirstPlayerCount()
 {
-	return playerCount;
+	return firstPlayerCount;
 }
 
-/*метод, возвращающий количество сделанных пк ходов*/
-int Game::GetCompCount()
+/*метод, возвращающий количество сделанных игроком 2 ходов*/
+int Game::GetSecondPlayerCount()
 {
-	return compCount;
+	return secondPlayerCount;
 }
 
-/*метод, проверяющий ход ли игрока
-@return - 1, если ход игрока, 0, если ход пк*/
-bool Game::IsPlayerMove()
+/*метод, проверяющий ход ли игрока 1
+@return - 1, если ход игрока 1, 0, если ход игрока 2*/
+bool Game::IsFirstPlayerMove()
 {
-	return playerMove;
+	return firstPlayerMove;
 }
 
-/*метод, проверяющий ход ли пк
-@return - 1, если ход пк, 0, если ход игрока*/
-bool Game::IsCompMove()
+/*метод, проверяющий ход ли игрока 2
+@return - 1, если ход игрока 2, 0, если ход игрока 1*/
+bool Game::IsSecondPlayerMove()
 {
-	return compMove;
+	return secondPlayerMove;
 }
 
-//метод очистки поля игрока
-void Game::ClearPlayerField()
+//метод очистки поля игрока 1
+void Game::ClearFirstPlayerField()
 {
-	PlayerField.Clear();
+	firstPlayerField.Clear();
 }
 
-/*метод получения значения ячейки поля игрока
+/*метод получения значения ячейки поля игрока 1
 @param i - номер строки
 @param j - номер столбца
-@return - значение ячейки [i][j] поля игрока*/
-int Game::PlayerValue(int i, int j)
+@return - значение ячейки [i][j] поля игрока 1*/
+int Game::FirstPlayerValue(int i, int j)
 {
-	return PlayerField.GetValue(i, j);
+	return firstPlayerField.GetValue(i, j);
 }
 
-/*метод получения значения ячейки поля пк
+/*метод получения значения ячейки поля игрока 2
 @param i - номер строки
 @param j - номер столбца
-@return - значение ячейки [i][j] поля пк*/
-int Game::CompValue(int i, int j)
+@return - значение ячейки [i][j] поля игрока 2*/
+int Game::SecondPlayerValue(int i, int j)
 {
-	return CompField.GetValue(i, j);
+	return secondPlayerField.GetValue(i, j);
 }
 
-/*метод ручного размещения корабля на поле игрока
+/*метод ручного размещения корабля на поле игрока 1
 @param i - номер строки
 @param j - номер столбца
 @param deckCount - количество палуб
 @param direction - направление расстановки
 @return - 1, если корабль размещен, 0, если нет*/
-bool Game::PlayerPlacement(int i, int j, int deckCount, bool direction)
+bool Game::FirstPlayerPlacement(int i, int j, int deckCount, bool direction)
 {
-	return PlayerField.UserPlacement(i, j, deckCount, direction);
+	return firstPlayerField.UserPlacement(i, j, deckCount, direction);
 }
 
-/*метод получения числа убитых кораблей каждого типа на поле игрока
+/*метод получения числа убитых кораблей каждого типа на поле игрока 1
 @return - массив количеств убитых кораблей*/
-cli::array<int>^ Game::GetPlayerKillCount()
+cli::array<int>^ Game::GetFirstPlayerKillCount()
 {
-	cli::array<int>^ count = PlayerField.GetKillCount();
+	cli::array<int>^ count = firstPlayerField.GetKillCount();
 	return count;
 }
 
-/*метод получения числа убитых кораблей каждого типа на поле пк
+/*метод получения числа убитых кораблей каждого типа на поле игрока 2
 @return - массив количеств убитых кораблей*/
-cli::array<int>^ Game::GetCompKillCount()
+cli::array<int>^ Game::GetSecondPlayerKillCount()
 {
-	cli::array<int>^ count = CompField.GetKillCount();
+	cli::array<int>^ count = secondPlayerField.GetKillCount();
 	return count;
 }

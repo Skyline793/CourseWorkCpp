@@ -7,29 +7,28 @@ using System::SerializableAttribute;
 using namespace System::Threading;
 
 [Serializable]
-ref class Game //класс, реализующий ход игры
+ref class Game //абстрактный класс класс, реализующий ход игры
 {
-	Battlefield PlayerField, CompField; //объекты поле игрока и поле пк
+protected:
+	Battlefield firstPlayerField, secondPlayerField; //объекты поля игроков
 	int endGame; //0 игра идет, 1 игрок победил, 2 компьютер победил
-	int playerCount; //число ходов игрока
-	int compCount; //число ходов пк
-	bool playerMove; //логическая переменная, означающая ход игрока
-	bool compMove; //логическая переменная, означающая ход пк
-	bool CompMove(); //метод хода компьютера
-	void Run(); //метод-делегает для потока хода компьютера
+	int firstPlayerCount; //число ходов игрока 1
+	int secondPlayerCount; //число ходов игрока 2
+	bool firstPlayerMove; //логическая переменная, означающая время хода игрока 1
+	bool secondPlayerMove; //логическая переменная, означающая время хода игрока 2
 public:
+	virtual void PlayerMove(int i, int j) = 0; //виртуальный метод хода игрока
 	void Start(int rasstanovka); //метод начала игры
-	void PlayerMove(int i, int j); //метод хода игрока
 	int IsEndGame(); //метод проверки окончания игры
-	int GetPlayerCount(); /*метод, возвращающий количество сделанных игроком ходов*/
-	int GetCompCount(); /*метод, возвращающий количество сделанных пк ходов*/
-	bool IsPlayerMove(); //метод, проверяющий ход ли игрока
-	bool IsCompMove(); //метод, проверяющий ход ли пк
-	void ClearPlayerField(); //метод очистки поля игрока
-	int PlayerValue(int i, int j); //метод получения значения ячейки поля игрока
-	int CompValue(int i, int j); //метод получения значения ячейки поля пк
-	bool PlayerPlacement(int i, int j, int deckCount, bool direction); //метод ручного размещения корабля на поле игрока
-	cli::array<int>^ GetPlayerKillCount(); //метод получения числа убитых кораблей каждого типа на поле игрока
-	cli::array<int>^ GetCompKillCount(); //метод получения числа убитых кораблей каждого типа на поле пк
+	int GetFirstPlayerCount(); /*метод, возвращающий количество сделанных первым игроком ходов*/
+	int GetSecondPlayerCount(); /*метод, возвращающий количество сделанных вторым игроком (пк) ходов*/
+	bool IsFirstPlayerMove(); //метод, проверяющий ход ли игрока 1
+	bool IsSecondPlayerMove(); //метод, проверяющий ход ли игрока 2 (пк)
+	void ClearFirstPlayerField(); //метод очистки поля игрока 1
+	int FirstPlayerValue(int i, int j); //метод получения значения ячейки поля игрока 1 
+	int SecondPlayerValue(int i, int j); //метод получения значения ячейки поля игрока 2 (пк)
+	bool FirstPlayerPlacement(int i, int j, int deckCount, bool direction); //метод ручного размещения корабля на поле игрока 1
+	cli::array<int>^ GetFirstPlayerKillCount(); //метод получения числа убитых кораблей каждого типа на поле игрока 1
+	cli::array<int>^ GetSecondPlayerKillCount(); //метод получения числа убитых кораблей каждого типа на поле игрока 2
 };
 

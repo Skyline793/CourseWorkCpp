@@ -1,5 +1,7 @@
 #pragma once
 #include "Game.h"
+#include "GamePVE.h"
+#include "GamePVP.h"
 
 namespace CourseWork {
 
@@ -18,18 +20,21 @@ namespace CourseWork {
 	public ref class SeaBattle : public System::Windows::Forms::Form
 	{
 	private:
-		Game^ game;
-		const int DXY = 80;
-		const int H = 30;
+		Game^ game; //переменная абстрактного класса игра, с помощью которой будет реализован процесс игры
+		GamePVE^ gamePVE; //переменная класса игры в режиме игрок против пк
+		GamePVP^ gamePVP; //переменная класса игры в режиме игрок против игрока
+		int gameMode; //режим игры: 1 - игрок против пк, 2 - игрок против игрока
+		const int DXY = 80; //смещение по X и Y при отрисовке элементов
+		const int H = 30; //коэффициент масштаба при отрисовке
+		Drawing::Rectangle field1, field2; //прямогульники, образующие контур игровых полей
 		Drawing::Rectangle ship1, ship2, ship3, ship4;
-		Drawing::Rectangle field1, field2;
 		int s1, s2, s3, s4;
 		bool selectS1, selectS2, selectS3, selectS4;
-		bool rasstanovka;
-		bool vert;
-		Image^ wound, ^ kill, ^ deck, ^ miss;
-		static const cli::array<String^>^ symbols = gcnew cli::array<String^> { "А", "Б", "В", "Г", "Д", "Е", "Ж", "З", "И", "К" };
-		static const cli::array<String^>^ numbers = gcnew cli::array<String^> { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
+		bool rasstanovka; //логическая переменная, проверяющая выбран ли режим ручной расстановки
+		bool vert; //логическая переменная определяющая положение кораблей в ручной расстановке
+		Image^ wound, ^ kill, ^ deck, ^ miss; //изображения для отрисовки ранения, унчитожения палубы, самой палубы, промаха
+		static const cli::array<String^>^ symbols = gcnew cli::array<String^> { "А", "Б", "В", "Г", "Д", "Е", "Ж", "З", "И", "К" }; //массив подписей столбцов полей
+		static const cli::array<String^>^ numbers = gcnew cli::array<String^> { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" }; //массив подписей строк полей
 	private: System::Windows::Forms::PictureBox^ pictureBox;
 	private: System::Windows::Forms::MenuStrip^ menuStrip;
 	private: System::Windows::Forms::ToolStripMenuItem^ PlayMenuItem;
@@ -39,8 +44,8 @@ namespace CourseWork {
 	private: System::Windows::Forms::ToolStripMenuItem^ SpravkaMenuItem;
 	private: System::Windows::Forms::Button^ orientation_button;
 	private: System::Windows::Forms::Label^ Placelabel;
-	private: System::Windows::Forms::Label^ playerFieldlabel;
-	private: System::Windows::Forms::Label^ compFieldlabel;
+	private: System::Windows::Forms::Label^ player1Fieldlabel;
+	private: System::Windows::Forms::Label^ player2Fieldlabel;
 	private: System::Windows::Forms::Label^ Countlabel;
 	private: System::Windows::Forms::ToolStripMenuItem^ ProgramMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^ FileMenuItem;
@@ -49,28 +54,29 @@ namespace CourseWork {
 	private: System::Windows::Forms::SaveFileDialog^ saveFileDialog;
 	private: System::Windows::Forms::OpenFileDialog^ openFileDialog;
 	private: System::Windows::Forms::Button^ Clearbutton;
+	private: System::Windows::Forms::ToolStripMenuItem^ PVPMenuItem;
 	private: System::Windows::Forms::Timer^ timer;
 	public:
 		SeaBattle(void)
 		{
-
-			System::Resources::ResourceManager^ resources = gcnew System::Resources::ResourceManager(SeaBattle::typeid);
 			InitializeComponent();
-			game = gcnew Game();
-			deck = Image::FromFile("deck.png");
-			kill = Image::FromFile("kill.png");
-			wound = Image::FromFile("wound.png");
-			miss = Image::FromFile("miss.png");
-			//try
-			//{
-			//deck = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("deck"));
-			//kill = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("kill"));
-			//wound = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("wound"));
-			//miss = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("miss"));
-			//}
-			//catch (...)
-			//{
-			//}
+			gameMode = 0;
+			player1Fieldlabel->Visible = false;
+			player2Fieldlabel->Visible = false;
+			Countlabel->Visible = false;
+			System::Resources::ResourceManager^ resources = gcnew System::Resources::ResourceManager(SeaBattle::typeid);
+			try
+			{
+			deck = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("deck"));
+			kill = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("kill"));
+			wound = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("wound"));
+			miss = cli::safe_cast<System::Drawing::Image^>(resources->GetObject("miss"));
+			}
+			catch (...)
+			{
+				MessageBox::Show("Ошибка при загрузке игровых файлов!", "Ошибка", MessageBoxButtons::OK, MessageBoxIcon::Error);
+				Application::Exit();
+			}
 		}
 	protected:
 		/// <summary>
@@ -106,6 +112,7 @@ namespace CourseWork {
 			this->PVEMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->AutoPlacementMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->UserPlacementMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->PVPMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->FileMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->SaveMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->LoadMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -113,8 +120,8 @@ namespace CourseWork {
 			this->ProgramMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->orientation_button = (gcnew System::Windows::Forms::Button());
 			this->Placelabel = (gcnew System::Windows::Forms::Label());
-			this->playerFieldlabel = (gcnew System::Windows::Forms::Label());
-			this->compFieldlabel = (gcnew System::Windows::Forms::Label());
+			this->player1Fieldlabel = (gcnew System::Windows::Forms::Label());
+			this->player2Fieldlabel = (gcnew System::Windows::Forms::Label());
 			this->Countlabel = (gcnew System::Windows::Forms::Label());
 			this->saveFileDialog = (gcnew System::Windows::Forms::SaveFileDialog());
 			this->openFileDialog = (gcnew System::Windows::Forms::OpenFileDialog());
@@ -152,15 +159,18 @@ namespace CourseWork {
 			});
 			this->menuStrip->Location = System::Drawing::Point(0, 0);
 			this->menuStrip->Name = L"menuStrip";
-			this->menuStrip->Size = System::Drawing::Size(1083, 30);
+			this->menuStrip->Size = System::Drawing::Size(1083, 28);
 			this->menuStrip->TabIndex = 1;
 			this->menuStrip->Text = L"menuStrip1";
 			// 
 			// PlayMenuItem
 			// 
-			this->PlayMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->PVEMenuItem });
+			this->PlayMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
+				this->PVEMenuItem,
+					this->PVPMenuItem
+			});
 			this->PlayMenuItem->Name = L"PlayMenuItem";
-			this->PlayMenuItem->Size = System::Drawing::Size(71, 26);
+			this->PlayMenuItem->Size = System::Drawing::Size(71, 24);
 			this->PlayMenuItem->Text = L"Играть";
 			// 
 			// PVEMenuItem
@@ -187,6 +197,13 @@ namespace CourseWork {
 			this->UserPlacementMenuItem->Text = L"Ручная расстановка";
 			this->UserPlacementMenuItem->Click += gcnew System::EventHandler(this, &SeaBattle::UserPlacementMenuItem_Click);
 			// 
+			// PVPMenuItem
+			// 
+			this->PVPMenuItem->Name = L"PVPMenuItem";
+			this->PVPMenuItem->Size = System::Drawing::Size(279, 26);
+			this->PVPMenuItem->Text = L"Игрок против игрока";
+			this->PVPMenuItem->Click += gcnew System::EventHandler(this, &SeaBattle::PVPMenuItem_Click);
+			// 
 			// FileMenuItem
 			// 
 			this->FileMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
@@ -194,7 +211,7 @@ namespace CourseWork {
 					this->LoadMenuItem
 			});
 			this->FileMenuItem->Name = L"FileMenuItem";
-			this->FileMenuItem->Size = System::Drawing::Size(108, 26);
+			this->FileMenuItem->Size = System::Drawing::Size(108, 24);
 			this->FileMenuItem->Text = L"Сохранение";
 			// 
 			// SaveMenuItem
@@ -214,13 +231,13 @@ namespace CourseWork {
 			// SpravkaMenuItem
 			// 
 			this->SpravkaMenuItem->Name = L"SpravkaMenuItem";
-			this->SpravkaMenuItem->Size = System::Drawing::Size(81, 26);
+			this->SpravkaMenuItem->Size = System::Drawing::Size(81, 24);
 			this->SpravkaMenuItem->Text = L"Справка";
 			// 
 			// ProgramMenuItem
 			// 
 			this->ProgramMenuItem->Name = L"ProgramMenuItem";
-			this->ProgramMenuItem->Size = System::Drawing::Size(118, 26);
+			this->ProgramMenuItem->Size = System::Drawing::Size(118, 24);
 			this->ProgramMenuItem->Text = L"О программе";
 			// 
 			// orientation_button
@@ -251,29 +268,27 @@ namespace CourseWork {
 			this->Placelabel->TextAlign = System::Drawing::ContentAlignment::TopCenter;
 			this->Placelabel->Visible = false;
 			// 
-			// playerFieldlabel
+			// player1Fieldlabel
 			// 
-			this->playerFieldlabel->BackColor = System::Drawing::Color::White;
-			this->playerFieldlabel->Font = (gcnew System::Drawing::Font(L"Segoe UI Semibold", 13.8F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->player1Fieldlabel->BackColor = System::Drawing::Color::White;
+			this->player1Fieldlabel->Font = (gcnew System::Drawing::Font(L"Segoe UI Semibold", 13.8F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
-			this->playerFieldlabel->Location = System::Drawing::Point(128, 43);
-			this->playerFieldlabel->Name = L"playerFieldlabel";
-			this->playerFieldlabel->Size = System::Drawing::Size(212, 33);
-			this->playerFieldlabel->TabIndex = 4;
-			this->playerFieldlabel->Text = L"Игрок";
-			this->playerFieldlabel->TextAlign = System::Drawing::ContentAlignment::TopCenter;
+			this->player1Fieldlabel->Location = System::Drawing::Point(128, 43);
+			this->player1Fieldlabel->Name = L"player1Fieldlabel";
+			this->player1Fieldlabel->Size = System::Drawing::Size(212, 33);
+			this->player1Fieldlabel->TabIndex = 4;
+			this->player1Fieldlabel->TextAlign = System::Drawing::ContentAlignment::TopCenter;
 			// 
-			// compFieldlabel
+			// player2Fieldlabel
 			// 
-			this->compFieldlabel->BackColor = System::Drawing::Color::White;
-			this->compFieldlabel->Font = (gcnew System::Drawing::Font(L"Segoe UI Semibold", 13.8F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->player2Fieldlabel->BackColor = System::Drawing::Color::White;
+			this->player2Fieldlabel->Font = (gcnew System::Drawing::Font(L"Segoe UI Semibold", 13.8F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
-			this->compFieldlabel->Location = System::Drawing::Point(508, 43);
-			this->compFieldlabel->Name = L"compFieldlabel";
-			this->compFieldlabel->Size = System::Drawing::Size(212, 33);
-			this->compFieldlabel->TabIndex = 5;
-			this->compFieldlabel->Text = L"Компьютер";
-			this->compFieldlabel->TextAlign = System::Drawing::ContentAlignment::TopCenter;
+			this->player2Fieldlabel->Location = System::Drawing::Point(508, 43);
+			this->player2Fieldlabel->Name = L"player2Fieldlabel";
+			this->player2Fieldlabel->Size = System::Drawing::Size(212, 33);
+			this->player2Fieldlabel->TabIndex = 5;
+			this->player2Fieldlabel->TextAlign = System::Drawing::ContentAlignment::TopCenter;
 			// 
 			// Countlabel
 			// 
@@ -318,8 +333,8 @@ namespace CourseWork {
 			this->ClientSize = System::Drawing::Size(1083, 653);
 			this->Controls->Add(this->Clearbutton);
 			this->Controls->Add(this->Countlabel);
-			this->Controls->Add(this->compFieldlabel);
-			this->Controls->Add(this->playerFieldlabel);
+			this->Controls->Add(this->player2Fieldlabel);
+			this->Controls->Add(this->player1Fieldlabel);
 			this->Controls->Add(this->Placelabel);
 			this->Controls->Add(this->orientation_button);
 			this->Controls->Add(this->pictureBox);
@@ -339,59 +354,65 @@ namespace CourseWork {
 		}
 #pragma endregion
 
-	private: void DrawFields(Graphics^ g);
+	private: void DrawFields(Graphics^ g); //метод отрисовки игровых полей
 
-	private: void DrawShips(Graphics^ g);
+	private: void DrawComponentsPVE(); //метод отрисовки элементов в режиме игрок против пк
 
-	private: void DrawPlacementShips(Graphics^ g);
+	private: void DrawComponentsPVP(); //метод отрисовки элементов в режиме игрок против игрока
 
-	private: void SelectShip(MouseEventArgs^ e);
+	private: void DrawPlacementShips(Graphics^ g); //метод отрисовки кораблей при ручной расстановке
 
-	private: void PlaceShip(MouseEventArgs^ e);
+	private: void DrawRemainingShips(Graphics^ g); //метод отрисовки количества оставшихся у игроков кораблей
 
-	private: void DrawRemainingShips(Graphics^ g);
+	private: void PlaceShip(MouseEventArgs^ e); //метод реализации ручной расстановки корабля
 
+	private: void Move(MouseEventArgs^ e); //метод реализации хода игрока
+
+	//отрисовка всех элементов игры
 	private: System::Void pictureBox_Paint(System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e) {
 
 		Graphics^ g = e->Graphics;
-		DrawFields(g);
-		DrawShips(g);
-		if (!rasstanovka)
+		if (gameMode == 1)
+		{
+			DrawComponentsPVE();
+			DrawFields(g);
+			if (!rasstanovka)
+				DrawRemainingShips(g);
+			DrawPlacementShips(g);
+		}
+		if (gameMode == 2)
+		{
+			DrawComponentsPVP();
+			DrawFields(g);
 			DrawRemainingShips(g);
-		DrawPlacementShips(g);
+
+		}
 	}
 
+		   //обработка нажатия на форму
 	private: System::Void pictureBox_MouseClick(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
-		if (game->IsEndGame() == 0 && !rasstanovka && game->IsPlayerMove())
-		{
-			if (field2.Contains(e->Location) && game->IsEndGame() == 0)
-			{
-				int mX = e->X;
-				int mY = e->Y;
-				int i = (mX - (DXY + 13 * H)) / H;
-				int j = (mY - DXY) / H;
-				if (game->CompValue(i, j) >= -1 && game->CompValue(i, j) <= 4) {
-					game->PlayerMove(i, j);
-				}
-			}
-		}
-		if (rasstanovka)
-		{
-			SelectShip(e);
-			PlaceShip(e);
-		}
+		this->Move(e);
 	}
 
+		   //обработчик таймера
 	private: System::Void timer_Tick(System::Object^ sender, System::EventArgs^ e) {
+
+		//проверка завершения игры
 		if (game->IsEndGame() == 1)
 		{
 			timer->Stop();
-			MessageBox::Show("Поздравляем! Вы победили!", "Победа", MessageBoxButtons::OK, MessageBoxIcon::Information);
+			if (gameMode == 1)
+				MessageBox::Show("Поздравляем! Вы победили!", "Победа", MessageBoxButtons::OK, MessageBoxIcon::Information);
+			if (gameMode == 2)
+				MessageBox::Show("Игрок 1 победил! Подравляем!", "Победа", MessageBoxButtons::OK, MessageBoxIcon::Information);
 		}
 		if (game->IsEndGame() == 2)
 		{
 			timer->Stop();
-			MessageBox::Show("К сожалению, Вы проиграли!", "Поражение", MessageBoxButtons::OK, MessageBoxIcon::Information);
+			if (gameMode == 1)
+				MessageBox::Show("К сожалению, Вы проиграли!", "Поражение", MessageBoxButtons::OK, MessageBoxIcon::Information);
+			if (gameMode == 2)
+				MessageBox::Show("Игрок 2 победил! Подравляем!", "Победа", MessageBoxButtons::OK, MessageBoxIcon::Information);
 		}
 		if (rasstanovka)
 			this->SaveMenuItem->Enabled = false;
@@ -400,13 +421,21 @@ namespace CourseWork {
 		this->pictureBox->Refresh();
 	}
 
+		   //выбор меню авторасстановка в игре против пк
 	private: System::Void AutoPlacementMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
+		gameMode = 1;
+		gamePVE = gcnew GamePVE();
+		game = gamePVE;
 		rasstanovka = 0;
 		timer->Start();
 		game->Start(rasstanovka);
 	}
 
+		   //выбор меню ручная расстановка в игре против пк
 	private: System::Void UserPlacementMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
+		gameMode = 1;
+		gamePVE = gcnew GamePVE();
+		game = gamePVE;
 		rasstanovka = 1;
 		vert = 1;
 		s4 = 1;
@@ -417,10 +446,16 @@ namespace CourseWork {
 		game->Start(rasstanovka);
 	}
 
-	private: System::Void orientation_button_Click(System::Object^ sender, System::EventArgs^ e) {
-		vert = !vert;
+		   //выбор меню режим игрок против игрока
+	private: System::Void PVPMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
+		gameMode = 2;
+		gamePVP = gcnew GamePVP();
+		game = gamePVP;
+		timer->Start();
+		game->Start(0);
 	}
 
+		   //выбор меню сохранить игру
 	private: System::Void SaveMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
 		try {
 			if (saveFileDialog->ShowDialog() == Windows::Forms::DialogResult::OK)
@@ -438,6 +473,8 @@ namespace CourseWork {
 			MessageBox::Show("Возникла ошибка при сохранении игры!", "Ошибка сохранения", MessageBoxButtons::OK, MessageBoxIcon::Error);
 		}
 	}
+
+		   //выбор меню загрузить игру
 	private: System::Void LoadMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
 		try {
 			if (openFileDialog->ShowDialog() == Windows::Forms::DialogResult::OK)
@@ -446,6 +483,10 @@ namespace CourseWork {
 				FileStream^ fs = File::OpenRead(filename);
 				BinaryFormatter^ bf = gcnew BinaryFormatter();
 				game = (Game^)(bf->Deserialize(fs));
+				if (dynamic_cast<GamePVE^>(game))
+					gameMode = 1;
+				if (dynamic_cast<GamePVP^>(game))
+					gameMode = 2;
 				fs->Close();
 				openFileDialog->FileName = "";
 				timer->Start();
@@ -457,12 +498,21 @@ namespace CourseWork {
 			MessageBox::Show("Возникла ошибка при загрузке игры!", "Ошибка загрузки", MessageBoxButtons::OK, MessageBoxIcon::Error);
 		}
 	}
+
+		   //нажатие на кнопку очистить поле
 	private: System::Void Clearbutton_Click(System::Object^ sender, System::EventArgs^ e) {
 		s4 = 1;
 		s3 = 2;
 		s2 = 3;
 		s1 = 4;
-		this->game->ClearPlayerField();
+		this->game->ClearFirstPlayerField();
+	}
+
+		   //нажатие на кнопку повернуть корабли
+	private: System::Void orientation_button_Click(System::Object^ sender, System::EventArgs^ e) {
+		vert = !vert;
 	}
 	};
 }
+
+

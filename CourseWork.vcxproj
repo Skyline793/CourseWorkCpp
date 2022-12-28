@@ -114,6 +114,8 @@
   <ItemGroup>
     <ClInclude Include="Battlefield.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GamePVE.h" />
+    <ClInclude Include="GamePVP.h" />
     <ClInclude Include="SeaBattle.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -122,6 +124,8 @@
     <ClCompile Include="Battlefield.cpp" />
     <ClCompile Include="CourseWork.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GamePVE.cpp" />
+    <ClCompile Include="GamePVP.cpp" />
     <ClCompile Include="SeaBattle.cpp" />
   </ItemGroup>
   <ItemGroup>
