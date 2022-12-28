@@ -43,21 +43,17 @@ namespace CourseWork {
 	private: System::Windows::Forms::Label^ compFieldlabel;
 	private: System::Windows::Forms::Label^ Countlabel;
 	private: System::Windows::Forms::ToolStripMenuItem^ ProgramMenuItem;
-
-
 	private: System::Windows::Forms::ToolStripMenuItem^ FileMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^ SaveMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^ LoadMenuItem;
 	private: System::Windows::Forms::SaveFileDialog^ saveFileDialog;
 	private: System::Windows::Forms::OpenFileDialog^ openFileDialog;
 	private: System::Windows::Forms::Button^ Clearbutton;
-
-
 	private: System::Windows::Forms::Timer^ timer;
 	public:
 		SeaBattle(void)
 		{
-			
+
 			System::Resources::ResourceManager^ resources = gcnew System::Resources::ResourceManager(SeaBattle::typeid);
 			InitializeComponent();
 			game = gcnew Game();
@@ -468,5 +464,5 @@ namespace CourseWork {
 		s1 = 4;
 		this->game->ClearPlayerField();
 	}
-};
+	};
 }
