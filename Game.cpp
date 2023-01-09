@@ -2,7 +2,7 @@
 
 /*метод начала игры
 @param rasstanovka - включен ли режим расстановки*/
-void Game::Start(int rasstanovka)
+void Game::Start(bool rasstanovka)
 {
 	endGame = 0;
 	firstPlayerCount = 0;

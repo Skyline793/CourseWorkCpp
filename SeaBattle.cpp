@@ -7,8 +7,8 @@ namespace CourseWork
 	{
 		//отрисовка границ полей
 		Pen^ pen = gcnew Pen(Color::Black, 2);
-		field1 = Rectangle(DXY, DXY, 10 * H, 10 * H);
 		Drawing::Font^ font = gcnew Drawing::Font("Segoe UI", 11, FontStyle::Bold);
+		field1 = Rectangle(DXY, DXY, 10 * H, 10 * H);
 		field2 = Rectangle(DXY + 13 * H, DXY, 10 * H, 10 * H);
 		g->FillRectangle(gcnew SolidBrush(Color::White), field1);
 		g->FillRectangle(gcnew SolidBrush(Color::White), field2);
@@ -281,8 +281,8 @@ namespace CourseWork
 		}
 	}
 
-	//метод реализации хода игрока
-	void SeaBattle::Move(MouseEventArgs^ e)
+	//метод обработки клика мышкой
+	void SeaBattle::UserClick(MouseEventArgs^ e)
 	{
 		switch (gameMode)
 		{
@@ -310,9 +310,7 @@ namespace CourseWork
 				int mY = e->Y;
 				int i = (mX - (DXY + 13 * H)) / H;
 				int j = (mY - DXY) / H;
-				if (game->SecondPlayerValue(i, j) >= -1 && game->SecondPlayerValue(i, j) <= 4) {
-					game->PlayerMove(i, j);
-				}
+				game->PlayerMove(i, j);
 			}
 			if (game->IsEndGame() == 0 && game->IsSecondPlayerMove() && field1.Contains(e->Location))
 			{
@@ -320,9 +318,7 @@ namespace CourseWork
 				int mY = e->Y;
 				int i = (mX - DXY) / H;
 				int j = (mY - DXY) / H;
-				if (game->FirstPlayerValue(i, j) >= -1 && game->FirstPlayerValue(i, j) <= 4) {
-					game->PlayerMove(i, j);
-				}
+				game->PlayerMove(i, j);
 			}
 			break;
 		}

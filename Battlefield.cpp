@@ -1,5 +1,11 @@
 #include "Battlefield.h"
 
+//конструктор
+Battlefield::Battlefield()
+{
+	field = gcnew cli::array<int, 2>(10, 10);
+}
+
 /*метод симуляции выстрела по полю
 @param i - номер строки 
 @param j - номер столбца*/
@@ -23,7 +29,7 @@ int Battlefield::GetValue(int i, int j)
 @return 1, если принадлежит, 0, если нет*/
 bool Battlefield::InField(int i, int j)
 {
-	if (i >= 0 && i < N && j >= 0 && j < N)
+	if (i >= 0 && i < 10 && j >= 0 && j < 10)
 		return 1;
 	else
 		return 0;
@@ -230,8 +236,8 @@ void Battlefield::SurroundPlacedDeck(int i, int j)
 /*метод, завершающий расстановку корабля*/
 void Battlefield::FinishSurrounding()
 {
-	for (int i = 0; i < N; i++)
-		for (int j = 0; j < N; j++)
+	for (int i = 0; i < 10; i++)
+		for (int j = 0; j < 10; j++)
 			if (field[i, j] == -2)
 				field[i, j]++;
 }
@@ -288,8 +294,8 @@ bool Battlefield::UserPlacement(int i, int j, int deckCount, bool direction)
 int Battlefield::SumKilled()
 {
 	int Sum = 0;
-	for (int i = 0; i < N; i++)
-		for (int j = 0; j < N; j++)
+	for (int i = 0; i < 10; i++)
+		for (int j = 0; j < 10; j++)
 			if (field[i, j] >= 15)
 				Sum += field[i, j];
 	return Sum;
@@ -298,8 +304,8 @@ int Battlefield::SumKilled()
 /*метод очистки поля*/
 void Battlefield::Clear()
 {
-	for (int i = 0; i < N; i++)
-		for (int j = 0; j < N; j++)
+	for (int i = 0; i < 10; i++)
+		for (int j = 0; j < 10; j++)
 			field[i, j] = 0;
 }
 
@@ -309,8 +315,8 @@ cli::array<int>^ Battlefield::GetKillCount()
 {
 	cli::array<int>^ count;
 	int s1 = 0, s2 = 0, s3 = 0, s4 = 0;
-	for (int i = 0; i < N; i++)
-		for (int j = 0; j < N; j++)
+	for (int i = 0; i < 10; i++)
+		for (int j = 0; j < 10; j++)
 		{
 			if (field[i, j] == 15)
 				s1++;

@@ -7,8 +7,8 @@ using System::SerializableAttribute;
 ref class Battlefield //класс игровое поле
 {
 private:
-	static const int N = 10; //размер поля
-	cli::array<int, 2>^ field = gcnew cli::array<int, 2>(N, N); //игровое поле
+	cli::array<int, 2>^ field; //игровое поле
+
 	void AnalizeKill(int i, int j, int deckCount); //метод, анализирующий, убит ли корабль, координаты подбитой палубы которого передаются через параметры
 	void SetSurroundingKilled(int i, int j); //метод, уменьшающий значение ячейки поля на 1, если оно равно -1 или 6
 	void SurroundKilledDeck(int i, int j); //метод, уменьшающий окружение убитой палубы на 1 с помощью метода SetSurroundingKilled
@@ -18,6 +18,7 @@ private:
 	void SurroundPlacedDeck(int i, int j); //метод, изменяющий окружение размещенной палубы
 	void FinishSurrounding(); //метод, завершающий расстановку корабля
 public:
+	Battlefield(); //конструктор
 	void Fire(int i, int j); //метод симуляции выстрела по полю
 	int GetValue(int i, int j); //метод получения значения ячейки поля
 	bool InField(int i, int j); //метод, проверяющий принадлежит ли ячейка с заданными координатами полю

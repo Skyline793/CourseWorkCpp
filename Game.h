@@ -18,7 +18,7 @@ protected:
 	bool secondPlayerMove; //логическая переменная, означающая время хода игрока 2
 public:
 	virtual void PlayerMove(int i, int j) = 0; //виртуальный метод хода игрока
-	void Start(int rasstanovka); //метод начала игры
+	void Start(bool rasstanovka); //метод начала игры
 	int IsEndGame(); //метод проверки окончания игры
 	int GetFirstPlayerCount(); /*метод, возвращающий количество сделанных первым игроком ходов*/
 	int GetSecondPlayerCount(); /*метод, возвращающий количество сделанных вторым игроком (пк) ходов*/

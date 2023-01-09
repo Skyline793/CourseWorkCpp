@@ -5,7 +5,7 @@
 @param j - номер столбца*/
 void GamePVP::PlayerMove(int i, int j)
 {
-    if (IsFirstPlayerMove()) //если время хода игрока 1
+    if (IsFirstPlayerMove() && secondPlayerField.GetValue(i,j) >= -1 && secondPlayerField.GetValue(i, j) <= 4) //если время хода игрока 1 и можно бить
     {
         firstPlayerCount++;
         secondPlayerField.Fire(i, j);
@@ -17,7 +17,7 @@ void GamePVP::PlayerMove(int i, int j)
             secondPlayerMove = 1;
         }
     }
-    else if (IsSecondPlayerMove()) //если время хода игрока 2
+    else if (IsSecondPlayerMove() && firstPlayerField.GetValue(i, j) >= -1 && firstPlayerField.GetValue(i, j) <= 4) //если время хода игрока 2 и можно бить
     {
         secondPlayerCount++;
         firstPlayerField.Fire(i, j);
