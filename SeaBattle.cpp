@@ -323,4 +323,170 @@ namespace CourseWork
 			break;
 		}
 	}
+
+	//отрисовка всех элементов игры
+	System::Void SeaBattle::pictureBox_Paint(System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e) {
+
+		Graphics^ g = e->Graphics;
+		if (gameMode == 1)
+		{
+			DrawFields(g);
+			if (!rasstanovka)
+				DrawRemainingShips(g);
+			DrawPlacementShips(g);
+		}
+		if (gameMode == 2)
+		{
+			DrawFields(g);
+			DrawRemainingShips(g);
+		}
+	}
+
+	//обработка нажатия на форму
+	System::Void SeaBattle::pictureBox_MouseClick(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
+		if (e->Clicks == 1 && e->Button == System::Windows::Forms::MouseButtons::Left)
+			this->UserClick(e);
+	}
+
+	//обработчик таймера
+	System::Void SeaBattle::timer_Tick(System::Object^ sender, System::EventArgs^ e) {
+		//проверка завершения игры
+		if (game->IsEndGame() == 1)
+		{
+			timer->Stop();
+			if (gameMode == 1)
+				MessageBox::Show("Поздравляем! Вы победили!", "Победа", MessageBoxButtons::OK, MessageBoxIcon::Information);
+			if (gameMode == 2)
+				MessageBox::Show("Игрок 1 победил! Подравляем!", "Победа", MessageBoxButtons::OK, MessageBoxIcon::Information);
+		}
+		if (game->IsEndGame() == 2)
+		{
+			timer->Stop();
+			if (gameMode == 1)
+				MessageBox::Show("К сожалению, Вы проиграли!", "Поражение", MessageBoxButtons::OK, MessageBoxIcon::Information);
+			if (gameMode == 2)
+				MessageBox::Show("Игрок 2 победил! Подравляем!", "Победа", MessageBoxButtons::OK, MessageBoxIcon::Information);
+		}
+		if (rasstanovka)
+			this->SaveMenuItem->Enabled = false;
+		else
+			this->SaveMenuItem->Enabled = true;
+		if (gameMode == 1)
+			DrawComponentsPVE();
+		if (gameMode == 2)
+			DrawComponentsPVP();
+
+		this->pictureBox->Refresh();
+	}
+
+	//выбор меню авторасстановка в игре против пк
+	System::Void SeaBattle::AutoPlacementMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
+		gameMode = 1;
+		gamePVE = gcnew GamePVE();
+		game = gamePVE;
+		rasstanovka = 0;
+		timer->Start();
+		game->Start(rasstanovka);
+	}
+
+	//выбор меню ручная расстановка в игре против пк
+	System::Void SeaBattle::UserPlacementMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
+		gameMode = 1;
+		gamePVE = gcnew GamePVE();
+		game = gamePVE;
+		rasstanovka = 1;
+		vert = 1;
+		s4 = 1;
+		s3 = 2;
+		s2 = 3;
+		s1 = 4;
+		timer->Start();
+		game->Start(rasstanovka);
+	}
+
+	//выбор меню режим игрок против игрока
+	System::Void SeaBattle::PVPMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
+		Placelabel->Visible = false;
+		orientation_button->Visible = false;
+		Clearbutton->Visible = false;
+		gameMode = 2;
+		gamePVP = gcnew GamePVP();
+		game = gamePVP;
+		timer->Start();
+		game->Start(0);
+	}
+
+	//выбор меню сохранить игру
+	System::Void SeaBattle::SaveMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
+		try {
+			if (saveFileDialog->ShowDialog() == Windows::Forms::DialogResult::OK)
+			{
+				String^ filename = saveFileDialog->FileName;
+				FileStream^ fs = File::Create(filename);
+				BinaryFormatter^ bf = gcnew BinaryFormatter();
+				bf->Serialize(fs, game);
+				fs->Close();
+				saveFileDialog->FileName = "";
+			}
+		}
+		catch (...)
+		{
+			MessageBox::Show("Возникла ошибка при сохранении игры!", "Ошибка сохранения", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		}
+	}
+
+	//выбор меню загрузить игру
+	System::Void SeaBattle::LoadMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
+		try {
+			if (openFileDialog->ShowDialog() == Windows::Forms::DialogResult::OK)
+			{
+				String^ filename = openFileDialog->FileName;
+				FileStream^ fs = File::OpenRead(filename);
+				BinaryFormatter^ bf = gcnew BinaryFormatter();
+				game = (Game^)(bf->Deserialize(fs));
+				if (dynamic_cast<GamePVE^>(game))
+					gameMode = 1;
+				if (dynamic_cast<GamePVP^>(game))
+					gameMode = 2;
+				fs->Close();
+				openFileDialog->FileName = "";
+				timer->Start();
+				rasstanovka = 0;
+			}
+		}
+		catch (...)
+		{
+			MessageBox::Show("Возникла ошибка при загрузке игры!", "Ошибка загрузки", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		}
+	}
+
+	//нажатие на кнопку очистить поле
+	System::Void SeaBattle::Clearbutton_Click(System::Object^ sender, System::EventArgs^ e) {
+		s4 = 1;
+		s3 = 2;
+		s2 = 3;
+		s1 = 4;
+		this->game->ClearFirstPlayerField();
+	}
+
+	//Справка 
+	System::Void SeaBattle::SpravkaMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
+		MessageBox::Show("Добро пожаловать в \"Морской бой\"!\n\nПравила игры:\nГлавной целью игры является уничтожение всех кораблей на поле противника.\
+ Используйте левую кнопку мыши, чтобы совершить выстрел по выбранной ячейке. Если в ячейке отобразится желтый крестик - вы попали по палубе корабля\
+ противника и можете повторить ход. Если вы промахнулись, в ячейке отобразится синяя точка и ход перейдет сопернику. Побеждает тот, кто первым уничтожит все корабли противника.\
+\n\nДля начала игры выберите в меню \"Играть\" один из доступных вариантов:\n1. Игрок против компьютера с авторасстановкой. Корабли на вашем поле будут расставлены\
+ автоматически случайным способом.\n2. Игрок против компьютера с ручной расстановкой. Справа от игровых полей отобразятся корабли, которые вам необходимо расставить:\
+ 1 четырехпалубный, 2 трехпалубных, 3 двухпалубных, 4 однопалубных. Выберите левой кнопкой мыши корабль, который хотите раместить, затем разместите его на вашем\
+ поле повторным кликом мыши. Размещать корабли за границей поля, или так, чтобы корабли касались друг друга, нельзя! Как только вы разместите весь флот, стартует игра.\n\
+3. Игрок против игрока. Этот режим предназначен для двух игроков. Корабли на обоих полях будут расставлены автоматически. Игроки поочередно совершают выстрелы по\
+ полю противника. Имя атакующего игрока выделено зеленым цветом.\n\nВы можете сохранить ход любой игры, воспользовавшись меню \"Сохранить игру\", а затем\
+ загрузить ее и продолжить играть с помощью меню \"Загрузить игру\".", "Справка");
+	}
+
+	//об авторе
+	System::Void SeaBattle::AuthorMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
+		MessageBox::Show("Разработчик:\nСтудент группы ПИ-11 Тюкавкин И.А.\nАлтГТУ им. И.И. Ползунова\nБарнаул, 2022", "Автор");
+	}
+
 }
+
